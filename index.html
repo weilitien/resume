@@ -31,6 +31,7 @@
       align-items: center;
       justify-content: center;
       padding: 1.5rem 0.75rem;
+      touch-action: none; /* 減少捲動干擾 */
     }
 
     .shell {
@@ -125,6 +126,7 @@
       padding: 0.75rem;
       border: 1px solid rgba(30, 64, 175, 0.55);
       position: relative;
+      overflow: hidden;
     }
 
     canvas {
@@ -341,6 +343,79 @@
       color: var(--text-muted);
       text-align: right;
     }
+
+    /* ===== 手機虛擬搖桿 & E 按鈕 ===== */
+
+    .joystick,
+    .interact-btn {
+      display: none; /* 預設給桌機隱藏，JS 偵測 touch 再打開 */
+    }
+
+    body.touch .joystick,
+    body.touch .interact-btn {
+      display: flex;
+    }
+
+    .joystick {
+      position: absolute;
+      left: 0.9rem;
+      bottom: 0.9rem;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.95);
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+      z-index: 10;
+    }
+
+    .joystick-inner {
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, rgba(249, 115, 22, 0.9), rgba(248, 250, 252, 0.1));
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(15, 23, 42, 0.8);
+      transform: translate(0, 0);
+      pointer-events: none;
+    }
+
+    .interact-btn {
+      position: absolute;
+      right: 1rem;
+      bottom: 1.1rem;
+      width: 78px; /* 大顆 E 按鈕 */
+      height: 78px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, #f97316, #7c2d12);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      border: 2px solid #fed7aa;
+      align-items: center;
+      justify-content: center;
+      color: #111827;
+      font-size: 1.5rem;
+      font-weight: 800;
+      user-select: none;
+      touch-action: manipulation;
+      z-index: 10;
+    }
+
+    .interact-btn span {
+      transform: translateY(2px);
+    }
+
+    .interact-btn:active {
+      transform: translateY(2px) scale(0.97);
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
   </style>
 </head>
 <body>
@@ -382,6 +457,16 @@
           </span>
           <span id="hudHint"></span>
         </div>
+
+        <!-- 虛擬搖桿 -->
+        <div class="joystick" id="joystick">
+          <div class="joystick-inner" id="joystickInner"></div>
+        </div>
+
+        <!-- 手機用 E 按鈕 -->
+        <button class="interact-btn" id="btnInteract" aria-label="Interact">
+          <span>E</span>
+        </button>
       </div>
 
       <aside class="info-panel">
@@ -585,6 +670,13 @@
     // Dynamic year
     document.getElementById("year").textContent = new Date().getFullYear();
 
+    // Touch device detection：有觸控就加 body.touch
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice) {
+      document.body.classList.add("touch");
+    }
+
     // ======== GAME LOGIC (Canvas) ========
 
     const canvas = document.getElementById("game");
@@ -669,9 +761,30 @@
     let lastTime = performance.now();
     let nearObject = null;
 
+    // Joystick state
+    const joystick = document.getElementById("joystick");
+    const joystickInner = document.getElementById("joystickInner");
+    const btnInteract = document.getElementById("btnInteract");
+
+    let joystickActive = false;
+    let joystickVec = { x: 0, y: 0 };
+
     window.addEventListener("keydown", (e) => {
       if (
-        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d", "W", "A", "S", "D"].includes(e.key)
+        [
+          "ArrowUp",
+          "ArrowDown",
+          "ArrowLeft",
+          "ArrowRight",
+          "w",
+          "a",
+          "s",
+          "d",
+          "W",
+          "A",
+          "S",
+          "D",
+        ].includes(e.key)
       ) {
         e.preventDefault();
       }
@@ -727,36 +840,29 @@
       ctx.save();
 
       if (obj.kind === "sign") {
-        // 路牌
         const cx = obj.x + obj.w / 2;
         const top = obj.y + 10;
 
-        // 柱子
         ctx.fillStyle = "#854d0e";
         ctx.fillRect(cx - 3, top + 14, 6, 26);
 
-        // 木板
         ctx.fillStyle = "#ca8a04";
         ctx.fillRect(cx - 28, top, 56, 16);
         ctx.strokeStyle = "rgba(0,0,0,0.35)";
         ctx.strokeRect(cx - 28, top, 56, 16);
 
-        // 小標籤文字
         ctx.fillStyle = "#0f172a";
         ctx.font = "9px system-ui";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("About", cx, top + 8);
       } else if (obj.kind === "tree") {
-        // 技能大樹
         const cx = obj.x + obj.w / 2;
         const baseY = obj.y + obj.h;
 
-        // 樹幹
         ctx.fillStyle = "#713f12";
         ctx.fillRect(cx - 8, baseY - 40, 16, 32);
 
-        // 樹冠
         ctx.fillStyle = "#16a34a";
         ctx.beginPath();
         ctx.arc(cx, baseY - 52, 24, 0, Math.PI * 2);
@@ -769,7 +875,6 @@
         ctx.arc(cx + 10, baseY - 50, 10, 0, Math.PI * 2);
         ctx.fill();
 
-        // 小標籤
         ctx.fillStyle = "rgba(15,23,42,0.9)";
         ctx.fillRect(cx - 24, baseY - 12, 48, 14);
         ctx.strokeStyle = "rgba(148,163,184,0.7)";
@@ -780,7 +885,6 @@
         ctx.textBaseline = "middle";
         ctx.fillText("Skills", cx, baseY - 5);
       } else if (obj.kind === "rack") {
-        // 伺服器機櫃
         const x = obj.x + 10;
         const y = obj.y + 8;
         const w = obj.w - 20;
@@ -791,7 +895,6 @@
         ctx.strokeStyle = obj.color;
         ctx.strokeRect(x, y, w, h);
 
-        // 橫條
         for (let i = 0; i < 3; i++) {
           const ry = y + 8 + i * 16;
           ctx.fillStyle = "#0f172a";
@@ -803,7 +906,6 @@
           ctx.fillRect(x + w - 14, ry + 3, 6, 4);
         }
 
-        // 小標籤
         ctx.fillStyle = "rgba(15,23,42,0.9)";
         ctx.fillRect(x + w / 2 - 30, y + h + 2, 60, 14);
         ctx.strokeStyle = "rgba(148,163,184,0.7)";
@@ -814,25 +916,20 @@
         ctx.textBaseline = "middle";
         ctx.fillText("Projects", x + w / 2, y + h + 9);
       } else if (obj.kind === "mailbox") {
-        // 郵箱
         const cx = obj.x + obj.w / 2;
         const baseY = obj.y + obj.h;
 
-        // 桿子
         ctx.fillStyle = "#374151";
         ctx.fillRect(cx - 3, baseY - 26, 6, 22);
 
-        // 箱體
         ctx.fillStyle = "#a855f7";
         ctx.fillRect(cx - 10, baseY - 40, 20, 14);
         ctx.fillStyle = "#c4b5fd";
         ctx.fillRect(cx - 8, baseY - 38, 16, 6);
 
-        // 投口
         ctx.fillStyle = "#111827";
         ctx.fillRect(cx - 7, baseY - 35, 14, 3);
 
-        // 小標籤
         ctx.fillStyle = "rgba(15,23,42,0.9)";
         ctx.fillRect(cx - 26, baseY - 12, 52, 14);
         ctx.strokeStyle = "rgba(148,163,184,0.7)";
@@ -861,7 +958,6 @@
         ctx.fillRect(x * SCALE, y * SCALE, w * SCALE, h * SCALE);
       }
 
-      // Shadow
       ctx.globalAlpha = 0.3;
       ctx.beginPath();
       ctx.ellipse(
@@ -879,18 +975,14 @@
 
       const stepOffset = player.moving && player.frame === 1 ? 1 : 0;
 
-      // Hair
       pRect(4, 0, 8, 2, "#020617");
       pRect(3, 2, 10, 2, "#020617");
 
-      // Face
       pRect(4, 4, 8, 4, "#facc99");
 
-      // Hair sides
       pRect(3, 4, 1, 4, "#020617");
       pRect(12, 4, 1, 4, "#020617");
 
-      // Eyes
       if (player.dir === "left") {
         pRect(5, 5, 1, 1, "#111827");
       } else if (player.dir === "right") {
@@ -900,7 +992,6 @@
         pRect(10, 5, 1, 1, "#111827");
       }
 
-      // Cloak / robe
       const cloakColor = "#1e293b";
       const trimColor = "#f97316";
 
@@ -912,7 +1003,6 @@
       pRect(12, 9, 1, 1, trimColor);
       pRect(7, 9, 2, 1, trimColor);
 
-      // Legs
       const legColor = "#0f172a";
       if (player.dir === "left" || player.dir === "right") {
         if (stepOffset === 0) {
@@ -938,28 +1028,42 @@
     function update(dt) {
       if (anyModalOpen()) {
         player.moving = false;
-        hudHint.textContent = "Press ESC or ✕ to close panels.";
+        hudHint.textContent = "Press ESC / ✕ / close button.";
         return;
       }
 
       let dx = 0;
       let dy = 0;
 
+      // Keyboard
       if (keys.has("ArrowUp") || keys.has("w") || keys.has("W")) {
         dy -= 1;
-        player.dir = "up";
       }
       if (keys.has("ArrowDown") || keys.has("s") || keys.has("S")) {
         dy += 1;
-        player.dir = "down";
       }
       if (keys.has("ArrowLeft") || keys.has("a") || keys.has("A")) {
         dx -= 1;
-        player.dir = "left";
       }
       if (keys.has("ArrowRight") || keys.has("d") || keys.has("D")) {
         dx += 1;
-        player.dir = "right";
+      }
+
+      // Joystick（touch 時生效）
+      if (joystickActive) {
+        dx += joystickVec.x;
+        dy += joystickVec.y;
+
+        if (Math.abs(joystickVec.x) > Math.abs(joystickVec.y)) {
+          player.dir = joystickVec.x > 0 ? "right" : "left";
+        } else if (Math.abs(joystickVec.y) > 0.01) {
+          player.dir = joystickVec.y > 0 ? "down" : "up";
+        }
+      } else {
+        if (dx < 0) player.dir = "left";
+        if (dx > 0) player.dir = "right";
+        if (dy < 0) player.dir = "up";
+        if (dy > 0) player.dir = "down";
       }
 
       player.moving = dx !== 0 || dy !== 0;
@@ -985,7 +1089,6 @@
         player.frameTimer = 0;
       }
 
-      // 物件偵測
       nearObject = null;
       const interactionRadius = 60;
       for (const obj of objects) {
@@ -1049,6 +1152,96 @@
         }
       });
     });
+
+    // ======== Joystick 控制 ========
+
+    if (isTouchDevice) {
+      const maxRadius = 48; // 搖桿最大半徑（px）
+      let baseX = 0;
+      let baseY = 0;
+
+      function resetJoystick() {
+        joystickActive = false;
+        joystickVec = { x: 0, y: 0 };
+        joystickInner.style.transform = "translate(0px, 0px)";
+      }
+
+      function handleJoystickTouch(ev) {
+        const touch = ev.touches[0];
+        if (!touch) return;
+        const rect = joystick.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        const dx = touch.clientX - cx;
+        const dy = touch.clientY - cy;
+        const dist = Math.min(Math.hypot(dx, dy), maxRadius);
+
+        const normX = dist === 0 ? 0 : dx / dist;
+        const normY = dist === 0 ? 0 : dy / dist;
+
+        joystickActive = true;
+        joystickVec = { x: normX, y: normY };
+
+        const innerX = normX * (dist / 2);
+        const innerY = normY * (dist / 2);
+        joystickInner.style.transform = `translate(${innerX}px, ${innerY}px)`;
+      }
+
+      joystick.addEventListener(
+        "touchstart",
+        (ev) => {
+          ev.preventDefault();
+          handleJoystickTouch(ev);
+        },
+        { passive: false }
+      );
+
+      joystick.addEventListener(
+        "touchmove",
+        (ev) => {
+          ev.preventDefault();
+          handleJoystickTouch(ev);
+        },
+        { passive: false }
+      );
+
+      joystick.addEventListener(
+        "touchend",
+        (ev) => {
+          ev.preventDefault();
+          resetJoystick();
+        },
+        { passive: false }
+      );
+
+      joystick.addEventListener(
+        "touchcancel",
+        (ev) => {
+          ev.preventDefault();
+          resetJoystick();
+        },
+        { passive: false }
+      );
+
+      // 手機 E 按鈕
+      btnInteract.addEventListener("click", () => {
+        if (nearObject && !anyModalOpen()) {
+          openModal(nearObject.modalId);
+        }
+      });
+
+      btnInteract.addEventListener(
+        "touchstart",
+        (ev) => {
+          ev.preventDefault();
+          if (nearObject && !anyModalOpen()) {
+            openModal(nearObject.modalId);
+          }
+        },
+        { passive: false }
+      );
+    }
   </script>
 </body>
 </html>
