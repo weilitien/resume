@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Wei Li Tien – SDET RPG Map Portfolio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
     :root {
       --bg: #020617;
@@ -31,7 +32,7 @@
       align-items: center;
       justify-content: center;
       padding: 1.5rem 0.75rem;
-      touch-action: none; /* 減少捲動干擾 */
+      touch-action: none;
     }
 
     .shell {
@@ -39,17 +40,17 @@
       max-width: 960px;
       background: radial-gradient(circle at top left, #111827, #020617 60%);
       border-radius: 20px;
-      box-shadow:
-        0 25px 50px rgba(15, 23, 42, 0.95),
-        0 0 0 1px rgba(148, 163, 184, 0.4);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      padding: 1.1rem 1.3rem 1.25rem;
+      padding: 1.1rem 1.3rem;
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
+      border: 1px solid rgba(148,163,184,0.5);
+      box-shadow:
+        0 25px 50px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(148,163,184,0.4);
     }
 
-    .header {
+    header.header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -70,286 +71,55 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
       color: #111827;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
+      font-weight: bold;
       font-size: 1rem;
+      box-shadow: 0 12px 30px rgba(15,23,42,0.9);
     }
 
-    .header-text {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .header-title {
-      font-size: 0.98rem;
-      font-weight: 600;
-    }
-
-    .header-sub {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
+    .header-text { display: flex; flex-direction: column; }
+    .header-title { font-size: 1rem; font-weight: 600; }
+    .header-sub { font-size: 0.75rem; color: #9ca3af; }
 
     .header-pill {
-      font-size: 0.72rem;
-      padding: 0.18rem 0.6rem;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.75rem;
       border-radius: 999px;
-      border: 1px solid rgba(249, 115, 22, 0.6);
-      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(249,115,22,0.6);
+      background: rgba(15,23,42,0.85);
       color: #fed7aa;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      white-space: nowrap;
     }
 
     .panel {
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
+      grid-template-columns: minmax(0,1.5fr) minmax(0,1.1fr);
       gap: 1rem;
     }
 
     @media (max-width: 820px) {
-      .panel {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      .panel { grid-template-columns: 1fr; }
     }
 
     .canvas-wrapper {
+      position: relative;
       background: radial-gradient(circle at top, #0b1120, #020617 65%);
       border-radius: 16px;
-      box-shadow:
-        inset 0 0 0 1px rgba(15, 23, 42, 0.7),
-        0 18px 40px rgba(15, 23, 42, 0.95);
       padding: 0.75rem;
-      border: 1px solid rgba(30, 64, 175, 0.55);
-      position: relative;
-      overflow: hidden;
+      border: 1px solid rgba(30,64,175,0.5);
+      box-shadow:
+        inset 0 0 0 1px rgba(15,23,42,0.7),
+        0 18px 40px rgba(15,23,42,0.95);
     }
 
     canvas {
-      display: block;
       width: 100%;
       height: auto;
       background: #020617;
       border-radius: 12px;
       image-rendering: pixelated;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        inset 0 0 0 1px rgba(15, 23, 42, 0.7);
     }
 
-    .hud {
-      position: absolute;
-      left: 0.95rem;
-      bottom: 0.7rem;
-      right: 0.95rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-
-    .hud span {
-      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.96), #020617);
-      border-radius: 999px;
-      padding: 0.18rem 0.6rem;
-      border: 1px solid rgba(51, 65, 85, 0.7);
-      pointer-events: auto;
-    }
-
-    .hud-keys {
-      display: flex;
-      gap: 0.3rem;
-      align-items: center;
-    }
-
-    .key {
-      display: inline-flex;
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      font-size: 0.6rem;
-      background: #020617;
-      color: #e5e7eb;
-    }
-
-    .info-panel {
-      border-radius: 16px;
-      background: radial-gradient(circle at top left, #020617, #020617 70%);
-      box-shadow:
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 18px 40px rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(30, 64, 175, 0.5);
-      padding: 0.85rem 0.9rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      font-size: 0.82rem;
-    }
-
-    .info-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 0.1rem;
-    }
-
-    .info-desc {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    .legend {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 0.45rem;
-      margin-top: 0.4rem;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    .legend-color {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-    }
-
-    .legend-color.about { background: #0ea5e9; }
-    .legend-color.skills { background: #22c55e; }
-    .legend-color.projects { background: #f97316; }
-    .legend-color.contact { background: #a855f7; }
-
-    .small-note {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 0.15rem;
-    }
-
-    /* Modal */
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 40;
-    }
-
-    .modal-backdrop.visible {
-      display: flex;
-    }
-
-    .modal {
-      width: min(540px, 100% - 2.5rem);
-      background: radial-gradient(circle at top left, #111827, #020617 70%);
-      border-radius: 18px;
-      box-shadow:
-        0 24px 60px rgba(15, 23, 42, 0.96),
-        0 0 0 1px rgba(148, 163, 184, 0.6);
-      border: 1px solid rgba(30, 64, 175, 0.7);
-      padding: 0.9rem 1rem 1rem;
-      position: relative;
-      max-height: 80vh;
-      overflow: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.4rem;
-    }
-
-    .modal-title {
-      font-size: 0.98rem;
-      font-weight: 600;
-    }
-
-    .modal-tag {
-      font-size: 0.72rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      color: var(--text-muted);
-    }
-
-    .modal-close {
-      border: none;
-      outline: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(15, 23, 42, 0.95);
-      color: var(--text-muted);
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-    }
-
-    .modal-close:hover {
-      background: #f97316;
-      color: #111827;
-      border-color: #fed7aa;
-    }
-
-    .modal-body {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .modal-body p + p {
-      margin-top: 0.4rem;
-    }
-
-    .modal-list {
-      margin-top: 0.5rem;
-      padding-left: 1.1rem;
-    }
-
-    .modal-list li {
-      margin-bottom: 0.25rem;
-    }
-
-    .modal-group-title {
-      margin-top: 0.6rem;
-      font-size: 0.82rem;
-      color: #e5e7eb;
-      font-weight: 500;
-    }
-
-    .footer {
-      margin-top: 0.1rem;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-align: right;
-    }
-
-    /* ===== 手機虛擬搖桿 & E 按鈕 ===== */
-
-    .joystick,
-    .interact-btn {
-      display: none; /* 預設給桌機隱藏，JS 偵測 touch 再打開 */
-    }
+    /* ===== 小虛擬搖桿 ===== */
 
     body.touch .joystick,
     body.touch .interact-btn {
@@ -357,15 +127,16 @@
     }
 
     .joystick {
+      display: none;
       position: absolute;
-      left: 0.9rem;
-      bottom: 0.9rem;
-      width: 120px;
-      height: 120px;
+      left: 1rem;
+      bottom: 1rem;
+      width: 80px;
+      height: 80px;
       border-radius: 999px;
-      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.95);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.7));
+      border: 1px solid rgba(148,163,184,0.6);
+      box-shadow: 0 12px 25px rgba(15,23,42,0.9);
       align-items: center;
       justify-content: center;
       touch-action: none;
@@ -373,333 +144,271 @@
     }
 
     .joystick-inner {
-      width: 52px;
-      height: 52px;
+      width: 32px;
+      height: 32px;
       border-radius: 999px;
-      background: radial-gradient(circle at top, rgba(249, 115, 22, 0.9), rgba(248, 250, 252, 0.1));
+      background: radial-gradient(circle at top, rgba(249,115,22,0.9), rgba(248,250,252,0.1));
       box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(15, 23, 42, 0.8);
-      transform: translate(0, 0);
+        0 8px 18px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(15,23,42,0.8);
+      transform: translate(0,0);
       pointer-events: none;
     }
 
+    /* ===== 小 E 按鈕 ===== */
+
     .interact-btn {
-  position: absolute;
-  right: 1rem;
-  bottom: 1.1rem;
-  width: 42px;   /* 小尺寸 */
-  height: 42px;  /* 小尺寸 */
-  border-radius: 999px;
-  background: radial-gradient(circle at top, #f97316, #7c2d12);
-  box-shadow:
-    0 12px 22px rgba(0, 0, 0, 0.85),
-    0 0 0 1px rgba(15, 23, 42, 0.9);
-  border: 1px solid #fed7aa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #111827;
-  font-size: 1rem;       /* E 字較小 */
-  font-weight: 700;
-  user-select: none;
-  touch-action: manipulation;
-  z-index: 10;
-}
+      display: none;
+      position: absolute;
+      right: 1rem;
+      bottom: 1.1rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top, #f97316, #7c2d12);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,0.9),
+        0 0 0 1px rgba(15,23,42,0.9);
+      border: 1px solid #fed7aa;
+      align-items: center;
+      justify-content: center;
+      color: #111827;
+      font-size: 1rem;
+      font-weight: bold;
+      z-index: 10;
+    }
 
-.interact-btn span {
-  transform: translateY(1px);
-}
+    .interact-btn:active {
+      transform: translateY(1px) scale(0.96);
+    }
 
-.interact-btn:active {
-  transform: translateY(1px) scale(0.96);
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.85),
-    0 0 0 1px rgba(15, 23, 42, 0.9);
-}
+    /* HUD */
+    .hud {
+      position: absolute;
+      left: 0.9rem;
+      bottom: 0.6rem;
+      right: 0.9rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .key {
+      display: inline-flex;
+      width: 18px;
+      height: 18px;
+      font-size: 0.6rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      border: 1px solid rgba(148,163,184,0.8);
+    }
 
   </style>
 </head>
+
 <body>
+  <!-- 容器 -->
   <div class="shell">
+
     <header class="header">
       <div class="header-main">
         <div class="avatar">W</div>
         <div class="header-text">
           <div class="header-title">Wei Li Tien</div>
-          <div class="header-sub">SDET · QA Automation & AI-assisted Testing</div>
+          <div class="header-sub">SDET · Interactive RPG Portfolio</div>
         </div>
       </div>
-      <div class="header-pill">
-        <span>RPG Map Portfolio</span>
-        <span>🎮</span>
-      </div>
+      <div class="header-pill">RPG Demo 🎮</div>
     </header>
 
     <div class="panel">
+
       <div class="canvas-wrapper">
         <canvas id="game" width="640" height="400"></canvas>
+
         <div class="hud">
-          <span>
-            <strong>Controls</strong>:
-            <span class="hud-keys">
-              <span class="key">W</span>
-              <span class="key">A</span>
-              <span class="key">S</span>
-              <span class="key">D</span>
-              <span style="margin: 0 0.1rem;">or</span>
-              <span class="key">↑</span>
-              <span class="key">←</span>
-              <span class="key">↓</span>
-              <span class="key">→</span>
-              <span style="margin-left:0.25rem;">·</span>
-              <span class="key">E</span>
-              <span>interact</span>
-            </span>
-          </span>
+          <span><strong>Controls:</strong> WASD / ↑↓←→ + E</span>
           <span id="hudHint"></span>
         </div>
 
-        <!-- 虛擬搖桿 -->
-        <div class="joystick" id="joystick">
-          <div class="joystick-inner" id="joystickInner"></div>
+        <!-- 小搖桿 -->
+        <div id="joystick" class="joystick">
+          <div id="joystickInner" class="joystick-inner"></div>
         </div>
 
-        <!-- 手機用 E 按鈕 -->
-        <button class="interact-btn" id="btnInteract" aria-label="Interact">
-          <span>E</span>
-        </button>
+        <!-- 小 E 按鈕 -->
+        <button id="btnInteract" class="interact-btn"><span>E</span></button>
       </div>
 
+
+      <!-- ========= Aside / 說明欄 ========= -->
       <aside class="info-panel">
-        <div>
-          <div class="info-title">SDET World Map</div>
-          <p class="info-desc">
-            Move the pixel character around this tiny SDET world. Each object
-            represents part of my portfolio: a signpost for About, a tree for
-            Skills, a server rack for Projects and a mailbox for Contact.
-            Walk next to them and press <strong>E</strong> to open.
+        <div style="margin-bottom:0.4rem;">
+          <div style="font-size:0.9rem;font-weight:600;">SDET World Map</div>
+          <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.2rem;">
+            Walk around this small RPG world. Each object represents an area:
+            <strong>Signpost → About</strong>,
+            <strong>Tree → Skills</strong>,
+            <strong>Server Rack → Projects</strong>,
+            <strong>Mailbox → Contact</strong>.
           </p>
         </div>
 
-        <div>
-          <div class="modal-group-title">Legend</div>
-          <div class="legend">
-            <div class="legend-item">
-              <div class="legend-color about"></div>
-              <span>Signpost · About</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color skills"></div>
-              <span>Skill Tree · Skills</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color projects"></div>
-              <span>Server Rack · Projects</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color contact"></div>
-              <span>Mailbox · Contact</span>
-            </div>
-          </div>
+        <div style="margin-top:0.5rem;">
+          <div style="font-weight:600;font-size:0.85rem;">Legend</div>
+          <ul style="font-size:0.78rem;color:#9ca3af;margin-top:0.2rem;line-height:1.35;">
+            <li>🪧 Signpost → About Me</li>
+            <li>🌳 Skill Tree → Skills</li>
+            <li>🖥️ Server Rack → Projects</li>
+            <li>📮 Mailbox → Contact</li>
+          </ul>
         </div>
 
-        <div>
-          <div class="modal-group-title">What this shows</div>
-          <p class="info-desc">
-            This interactive map is a playful way to present my work as an
-            SDET — combining automation, infrastructure and AI-assisted testing
-            into a small RPG-style demo.
+        <div style="margin-top:0.5rem;">
+          <p style="font-size:0.8rem;color:#9ca3af;">
+            Built with HTML5 Canvas + vanilla JavaScript.  
+            This is a lightweight, interactive portfolio.
           </p>
-          <p class="small-note">
-            This is a simple vanilla HTML + Canvas + JavaScript prototype with
-            no external libraries.
-          </p>
-        </div>
-
-        <div class="footer">
-          Built as a playful portfolio demo · © <span id="year"></span> Wei Li Tien
         </div>
       </aside>
+
+    </div> <!-- panel -->
+  </div> <!-- shell -->
+
+  <!-- ========= Modal: About ========= -->
+  <div class="modal-backdrop" id="modal-about" style="
+    position:fixed;inset:0;background:rgba(15,23,42,0.85);
+    display:none;align-items:center;justify-content:center;z-index:40;">
+    <div class="modal" style="
+      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
+      border:1px solid rgba(148,163,184,0.4);">
+      <h2 style="margin:0;font-size:1rem;">🪧 About Me</h2>
+      <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.5rem;">
+        I’m <strong>Wei Li Tien</strong>, an SDET focusing on automation,
+        regression pipelines, test infrastructure, and AI-assisted testing.
+      </p>
+      <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.4rem;">
+        I build automated smoke tests, regression suites, VMware/vCenter workflows,
+        Jenkins pipelines, Allure reporting, and AI-generated test case systems.
+      </p>
+      <button data-close style="
+        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
+        background:#f97316;border:none;color:#111827;font-weight:bold;">
+        Close
+      </button>
     </div>
   </div>
 
-  <!-- Modal: About -->
-  <div class="modal-backdrop" id="modal-about">
-    <div class="modal">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">About Me</div>
-          <div class="modal-tag">🪧 About</div>
-        </div>
-        <button class="modal-close" data-close>✕</button>
-      </div>
-      <div class="modal-body">
-        <p>
-          I’m <strong>Wei Li Tien</strong>, an SDET / QA Automation Engineer
-          focused on building reliable test pipelines across virtualized
-          environments, legacy Windows and Linux platforms.
-        </p>
-        <p>
-          My daily work includes regression testing, smoke tests, API validation,
-          and maintaining Jenkins pipelines. I enjoy connecting infrastructure,
-          tooling and automation to keep things stable and observable.
-        </p>
-        <p>
-          Recently, I’ve been actively integrating <strong>AI tools</strong> into
-          my workflow — from generating test cases with templates, to debugging
-          scripts, and designing clear system flow diagrams to help teams align
-          faster.
-        </p>
-      </div>
+  <!-- ========= Modal: Skills ========= -->
+  <div class="modal-backdrop" id="modal-skills" style="
+    position:fixed;inset:0;background:rgba(15,23,42,0.85);
+    display:none;align-items:center;justify-content:center;z-index:40;">
+    <div class="modal" style="
+      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
+      border:1px solid rgba(148,163,184,0.4);">
+      <h2 style="margin:0;font-size:1rem;">🌳 Skills</h2>
+
+      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">Automation</h3>
+      <ul style="font-size:0.8rem;color:#9ca3af;margin-left:1rem;">
+        <li>Python test automation</li>
+        <li>pytest + Allure</li>
+        <li>Multi-VM agent test flows</li>
+      </ul>
+
+      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">CI/CD</h3>
+      <ul style="font-size:0.8rem;color:#9ca3af;margin-left:1rem;">
+        <li>Jenkins pipelines</li>
+        <li>HTML regression reports</li>
+        <li>Teams webhook notifications</li>
+      </ul>
+
+      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">AI-assisted Testing</h3>
+      <ul style="font-size:0.8rem;color:#9ca3af;margin-left:1rem;">
+        <li>AI-generated test case templates</li>
+        <li>LLM-guided debugging</li>
+      </ul>
+
+      <button data-close style="
+        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
+        background:#f97316;border:none;color:#111827;font-weight:bold;">
+        Close
+      </button>
     </div>
   </div>
 
-  <!-- Modal: Skills -->
-  <div class="modal-backdrop" id="modal-skills">
-    <div class="modal">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">Skills</div>
-          <div class="modal-tag">🌳 Skills</div>
-        </div>
-        <button class="modal-close" data-close>✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-group-title">Automation & Testing</div>
-        <ul class="modal-list">
-          <li>Python-based automation for API, UI, regression and smoke tests.</li>
-          <li><strong>pytest</strong> + <strong>Allure</strong> for structured tests and rich reporting.</li>
-          <li>Agent / backend flows across multiple OS and VMs.</li>
-        </ul>
+  <!-- ========= Modal: Projects ========= -->
+  <div class="modal-backdrop" id="modal-projects" style="
+    position:fixed;inset:0;background:rgba(15,23,42,0.85);
+    display:none;align-items:center;justify-content:center;z-index:40;">
+    <div class="modal" style="
+      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
+      border:1px solid rgba(148,163,184,0.4);">
+      <h2 style="margin:0;font-size:1rem;">🖥️ Projects</h2>
 
-        <div class="modal-group-title">CI/CD & Reporting</div>
-        <ul class="modal-list">
-          <li>Jenkins pipelines triggering regression and smoke jobs.</li>
-          <li>HTML report generation and <strong>Microsoft Teams</strong> webhook notifications.</li>
-          <li>Troubleshooting failed builds, flaky tests and environment issues.</li>
-        </ul>
+      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">
+        Regression Automation Pipeline
+      </h3>
+      <p style="font-size:0.8rem;color:#9ca3af;">
+        Multi-VM orchestration: install agents, disable RTS, run smoke tests,
+        generate Allure reports and push results to Teams.
+      </p>
 
-        <div class="modal-group-title">AI-Assisted Testing</div>
-        <ul class="modal-list">
-          <li>Using LLMs to generate test cases from a standard template.</li>
-          <li>Prompt engineering for consistent test case structure.</li>
-          <li>AI-assisted code review and log analysis for faster debugging.</li>
-        </ul>
+      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">
+        Template-driven AI Test Generator
+      </h3>
+      <p style="font-size:0.8rem;color:#9ca3af;">
+        AI-generated test cases from templates (positive, negative, boundary).
+      </p>
 
-        <div class="modal-group-title">Infrastructure & Tools</div>
-        <ul class="modal-list">
-          <li>VMware vSphere / vCenter lab maintenance and template management.</li>
-          <li>PowerCLI tooling for datastore scanning and VM management.</li>
-          <li>Windows & Linux environments for testing and automation.</li>
-        </ul>
-      </div>
+      <button data-close style="
+        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
+        background:#f97316;border:none;color:#111827;font-weight:bold;">
+        Close
+      </button>
     </div>
   </div>
 
-  <!-- Modal: Projects -->
-  <div class="modal-backdrop" id="modal-projects">
-    <div class="modal">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">Selected Projects</div>
-          <div class="modal-tag">🖥️ Projects</div>
-        </div>
-        <button class="modal-close" data-close>✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-group-title">Regression Automation Pipeline</div>
-        <p>
-          Orchestrates multi-VM regression flows: provisioning VMs, installing
-          agents, running smoke tests and exporting Allure reports with Teams
-          notifications. Helps standardize and automate regression as SDET work.
-        </p>
+  <!-- ========= Modal: Contact ========= -->
+  <div class="modal-backdrop" id="modal-contact" style="
+    position:fixed;inset:0;background:rgba(15,23,42,0.85);
+    display:none;align-items:center;justify-content:center;z-index:40;">
+    <div class="modal" style="
+      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
+      border:1px solid rgba(148,163,184,0.4);">
+      <h2 style="margin:0;font-size:1rem;">📮 Contact</h2>
+      <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.5rem;">
+        Email: <strong>godlisi@hotmail.com</strong>
+      </p>
 
-        <div class="modal-group-title">Template-Driven AI Test Case Generator</div>
-        <p>
-          Uses a standard test case template and LLM prompts to generate positive,
-          negative and edge-case API scenarios. The output is converted into
-          YAML/JSON used for <strong>pytest parametrize</strong>, speeding up
-          test design significantly.
-        </p>
-
-        <div class="modal-group-title">Datastore Orphan VM & Template Detector</div>
-        <p>
-          Scans VMware datastores to detect orphaned VM folders and renamed
-          templates, generating HTML reports integrated into a Jenkins
-          maintenance job. This improves lab hygiene and storage usage.
-        </p>
-
-        <div class="modal-group-title">AI-assisted Flow Diagrams & Troubleshooting</div>
-        <p>
-          Uses AI tools to draft clear regression flow diagrams, component update
-          flows and to help analyze logs when pipelines fail. These visuals and
-          insights make it easier to collaborate with developers and PMs.
-        </p>
-      </div>
+      <button data-close style="
+        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
+        background:#f97316;border:none;color:#111827;font-weight:bold;">
+        Close
+      </button>
     </div>
   </div>
 
-  <!-- Modal: Contact -->
-  <div class="modal-backdrop" id="modal-contact">
-    <div class="modal">
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">Contact</div>
-          <div class="modal-tag">📮 Get in touch</div>
-        </div>
-        <button class="modal-close" data-close>✕</button>
-      </div>
-      <div class="modal-body">
-        <p>
-          If you’re interested in SDET / QA automation, AI-assisted testing, or
-          building more stable regression pipelines, feel free to reach out.
-        </p>
-        <ul class="modal-list">
-          <li><strong>Email:</strong> godlisi@hotmail.com</li>
-          <li><strong>Location:</strong> Taiwan</li>
-          <li><strong>Open to:</strong> On-site or remote roles.</li>
-        </ul>
-        <p>
-          This map is just one example — I’m happy to walk through the underlying
-          automation / design and discuss how it can fit into your team.
-        </p>
-      </div>
-    </div>
-  </div>
 
+  <!-- ========= JavaScript（Canvas + 移動 + 搖桿 + Modal） ========= -->
   <script>
-    // Dynamic year
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    // Touch device detection：有觸控就加 body.touch
-    const isTouchDevice =
-      "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (isTouchDevice) {
-      document.body.classList.add("touch");
-    }
-
-    // ======== GAME LOGIC (Canvas) ========
-
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
-
-    const hudHint = document.getElementById("hudHint");
 
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
 
     const TILE = 32;
 
-    // Player config
-    const SCALE = 2;
-    const SPRITE_W = 16;
-    const SPRITE_H = 24;
+    const hudHint = document.getElementById("hudHint");
 
+    // 玩家
     const player = {
       x: WIDTH / 2,
       y: HEIGHT / 2,
-      speed: 2.1,
+      speed: 2,
       dir: "down",
       moving: false,
       frame: 0,
@@ -707,543 +416,286 @@
       frameInterval: 180,
     };
 
-    // World objects (四個不同物件 + 標籤)
+    // 四個互動物件
     const objects = [
-      {
-        id: "about",
-        kind: "sign",
-        label: "About",
-        x: 110,
-        y: 80,
-        w: 60,
-        h: 60,
-        color: "#0ea5e9",
-        modalId: "modal-about",
-        hint: "Read sign",
-      },
-      {
-        id: "skills",
-        kind: "tree",
-        label: "Skills",
-        x: WIDTH - 170,
-        y: 70,
-        w: 70,
-        h: 90,
-        color: "#22c55e",
-        modalId: "modal-skills",
-        hint: "Inspect skill tree",
-      },
-      {
-        id: "projects",
-        kind: "rack",
-        label: "Projects",
-        x: 110,
-        y: HEIGHT - 150,
-        w: 80,
-        h: 80,
-        color: "#f97316",
-        modalId: "modal-projects",
-        hint: "Inspect server rack",
-      },
-      {
-        id: "contact",
-        kind: "mailbox",
-        label: "Contact",
-        x: WIDTH - 160,
-        y: HEIGHT - 140,
-        w: 50,
-        h: 70,
-        color: "#a855f7",
-        modalId: "modal-contact",
-        hint: "Open mailbox",
-      },
+      { id:"about",    kind:"sign",    x:110,        y:80,         w:60, h:60, modal:"modal-about",    label:"About" },
+      { id:"skills",   kind:"tree",    x:WIDTH-170,  y:70,         w:70, h:90, modal:"modal-skills",   label:"Skills" },
+      { id:"projects", kind:"rack",    x:110,        y:HEIGHT-150, w:80, h:90, modal:"modal-projects", label:"Projects" },
+      { id:"contact",  kind:"mailbox", x:WIDTH-160,  y:HEIGHT-140, w:50, h:70, modal:"modal-contact",  label:"Contact" }
     ];
 
     const keys = new Set();
-    let lastTime = performance.now();
-    let nearObject = null;
+    let nearObj = null;
 
-    // Joystick state
-    const joystick = document.getElementById("joystick");
-    const joystickInner = document.getElementById("joystickInner");
-    const btnInteract = document.getElementById("btnInteract");
-
-    let joystickActive = false;
-    let joystickVec = { x: 0, y: 0 };
-
-    window.addEventListener("keydown", (e) => {
-      if (
-        [
-          "ArrowUp",
-          "ArrowDown",
-          "ArrowLeft",
-          "ArrowRight",
-          "w",
-          "a",
-          "s",
-          "d",
-          "W",
-          "A",
-          "S",
-          "D",
-        ].includes(e.key)
-      ) {
-        e.preventDefault();
-      }
+    // ========= PC 鍵盤 =========
+    window.addEventListener("keydown", e => {
       keys.add(e.key);
-
-      if (e.key === "e" || e.key === "E" || e.key === "Enter") {
-        if (nearObject && !anyModalOpen()) {
-          openModal(nearObject.modalId);
-        }
-      }
-
-      if (e.key === "Escape") {
-        closeAllModals();
-      }
+      if (e.key === "e" || e.key==="E") openIfNear();
     });
 
-    window.addEventListener("keyup", (e) => {
-      keys.delete(e.key);
-    });
+    window.addEventListener("keyup", e => keys.delete(e.key));
+
+    function openIfNear(){
+      if (nearObj) openModal(nearObj.modal);
+    }
 
     function anyModalOpen() {
-      return document.querySelector(".modal-backdrop.visible") !== null;
+      return document.querySelector(".modal-backdrop[style*='display: flex']") !== null;
     }
 
-    // Map drawing
+    // ========= 畫地圖背景 =========
     function drawMap() {
-      const g = ctx.createLinearGradient(0, 0, 0, HEIGHT);
-      g.addColorStop(0, "#020617");
-      g.addColorStop(1, "#020617");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, WIDTH, HEIGHT);
+      ctx.fillStyle = "#020617";
+      ctx.fillRect(0,0,WIDTH,HEIGHT);
 
-      ctx.strokeStyle = "rgba(15,23,42,0.7)";
-      ctx.lineWidth = 1;
-      for (let x = 0; x <= WIDTH; x += TILE) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, HEIGHT);
-        ctx.stroke();
+      ctx.strokeStyle="rgba(30,41,59,0.4)";
+      for(let x=0;x<=WIDTH;x+=TILE){
+        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,HEIGHT); ctx.stroke();
       }
-      for (let y = 0; y <= HEIGHT; y += TILE) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(WIDTH, y);
-        ctx.stroke();
+      for(let y=0;y<=HEIGHT;y+=TILE){
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(WIDTH,y); ctx.stroke();
       }
-
-      ctx.fillStyle = "rgba(15,23,42,0.8)";
-      ctx.fillRect(TILE, TILE, WIDTH - TILE * 2, HEIGHT - TILE * 2);
     }
 
-    function drawObject(obj) {
+    // ========= 各物件繪製 =========
+    function drawObject(o){
       ctx.save();
 
-      if (obj.kind === "sign") {
-        const cx = obj.x + obj.w / 2;
-        const top = obj.y + 10;
+      if (o.kind === "sign"){
+        const cx = o.x + o.w/2;
 
-        ctx.fillStyle = "#854d0e";
-        ctx.fillRect(cx - 3, top + 14, 6, 26);
+        ctx.fillStyle="#ca8a04";
+        ctx.fillRect(cx-28, o.y+10, 56, 16);
+        ctx.strokeStyle="#111";
+        ctx.strokeRect(cx-28, o.y+10, 56,16);
 
-        ctx.fillStyle = "#ca8a04";
-        ctx.fillRect(cx - 28, top, 56, 16);
-        ctx.strokeStyle = "rgba(0,0,0,0.35)";
-        ctx.strokeRect(cx - 28, top, 56, 16);
+        ctx.fillStyle="#111827";
+        ctx.font="10px monospace";
+        ctx.textAlign="center";
+        ctx.fillText("About", cx, o.y+22);
 
-        ctx.fillStyle = "#0f172a";
-        ctx.font = "9px system-ui";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("About", cx, top + 8);
-      } else if (obj.kind === "tree") {
-        const cx = obj.x + obj.w / 2;
-        const baseY = obj.y + obj.h;
+      } else if (o.kind === "tree"){
+        const cx = o.x + o.w/2;
+        const base = o.y + o.h;
 
-        ctx.fillStyle = "#713f12";
-        ctx.fillRect(cx - 8, baseY - 40, 16, 32);
+        ctx.fillStyle="#713f12";
+        ctx.fillRect(cx-8, base-40,16,32);
 
-        ctx.fillStyle = "#16a34a";
+        ctx.fillStyle="#22c55e";
         ctx.beginPath();
-        ctx.arc(cx, baseY - 52, 24, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#22c55e";
-        ctx.beginPath();
-        ctx.arc(cx - 10, baseY - 56, 12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cx + 10, baseY - 50, 10, 0, Math.PI * 2);
+        ctx.arc(cx, base-55, 25,0,Math.PI*2);
         ctx.fill();
 
-        ctx.fillStyle = "rgba(15,23,42,0.9)";
-        ctx.fillRect(cx - 24, baseY - 12, 48, 14);
-        ctx.strokeStyle = "rgba(148,163,184,0.7)";
-        ctx.strokeRect(cx - 24, baseY - 12, 48, 14);
-        ctx.fillStyle = "#e5e7eb";
-        ctx.font = "9px system-ui";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Skills", cx, baseY - 5);
-      } else if (obj.kind === "rack") {
-        const x = obj.x + 10;
-        const y = obj.y + 8;
-        const w = obj.w - 20;
-        const h = obj.h - 18;
+        ctx.fillStyle="rgba(2,2,2,0.9)";
+        ctx.fillRect(cx-26, base-12,52,14);
+        ctx.strokeStyle="#94a3b8";
+        ctx.strokeRect(cx-26, base-12,52,14);
+        ctx.fillStyle="#e5e7eb";
+        ctx.font="10px monospace";
+        ctx.textAlign="center";
+        ctx.fillText("Skills", cx, base-2);
 
-        ctx.fillStyle = "#020617";
-        ctx.fillRect(x, y, w, h);
-        ctx.strokeStyle = obj.color;
-        ctx.strokeRect(x, y, w, h);
+      } else if (o.kind === "rack"){
+        const x = o.x+10, y=o.y+10, w=o.w-20, h=o.h-20;
 
-        for (let i = 0; i < 3; i++) {
-          const ry = y + 8 + i * 16;
-          ctx.fillStyle = "#0f172a";
-          ctx.fillRect(x + 4, ry, w - 8, 10);
+        ctx.fillStyle="#111827";
+        ctx.fillRect(x,y,w,h);
+        ctx.strokeStyle="#f97316";
+        ctx.strokeRect(x,y,w,h);
 
-          ctx.fillStyle = "#e5e7eb";
-          ctx.fillRect(x + 6, ry + 3, 12, 4);
-          ctx.fillStyle = "#22c55e";
-          ctx.fillRect(x + w - 14, ry + 3, 6, 4);
+        for(let i=0;i<3;i++){
+          const ry=y+8+i*16;
+          ctx.fillStyle="#1e293b";
+          ctx.fillRect(x+6, ry, w-12, 10);
         }
 
-        ctx.fillStyle = "rgba(15,23,42,0.9)";
-        ctx.fillRect(x + w / 2 - 30, y + h + 2, 60, 14);
-        ctx.strokeStyle = "rgba(148,163,184,0.7)";
-        ctx.strokeRect(x + w / 2 - 30, y + h + 2, 60, 14);
-        ctx.fillStyle = "#e5e7eb";
-        ctx.font = "9px system-ui";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Projects", x + w / 2, y + h + 9);
-      } else if (obj.kind === "mailbox") {
-        const cx = obj.x + obj.w / 2;
-        const baseY = obj.y + obj.h;
+        ctx.fillStyle="rgba(2,2,2,0.9)";
+        ctx.fillRect(x+w/2-30, y+h+2, 60, 14);
+        ctx.fillStyle="#e5e7eb";
+        ctx.font="10px monospace";
+        ctx.textAlign="center";
+        ctx.fillText("Projects", x+w/2, y+h+12);
 
-        ctx.fillStyle = "#374151";
-        ctx.fillRect(cx - 3, baseY - 26, 6, 22);
+      } else if (o.kind === "mailbox"){
+        const cx = o.x + o.w/2;
+        const base = o.y + o.h;
 
-        ctx.fillStyle = "#a855f7";
-        ctx.fillRect(cx - 10, baseY - 40, 20, 14);
-        ctx.fillStyle = "#c4b5fd";
-        ctx.fillRect(cx - 8, baseY - 38, 16, 6);
+        ctx.fillStyle="#6b21a8";
+        ctx.fillRect(cx-12, base-45, 24, 18);
 
-        ctx.fillStyle = "#111827";
-        ctx.fillRect(cx - 7, baseY - 35, 14, 3);
-
-        ctx.fillStyle = "rgba(15,23,42,0.9)";
-        ctx.fillRect(cx - 26, baseY - 12, 52, 14);
-        ctx.strokeStyle = "rgba(148,163,184,0.7)";
-        ctx.strokeRect(cx - 26, baseY - 12, 52, 14);
-        ctx.fillStyle = "#e5e7eb";
-        ctx.font = "9px system-ui";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Contact", cx, baseY - 5);
+        ctx.fillStyle="#1e293b";
+        ctx.fillRect(cx-26, base-12, 52, 14);
+        ctx.strokeStyle="#94a3b8";
+        ctx.strokeRect(cx-26, base-12, 52,14);
+        ctx.fillStyle="#e5e7eb";
+        ctx.font="10px monospace";
+        ctx.textAlign="center";
+        ctx.fillText("Contact", cx, base-2);
       }
 
       ctx.restore();
     }
 
-    function drawPlayer() {
-      const px = player.x;
-      const py = player.y;
-      const ox = px - (SPRITE_W * SCALE) / 2;
-      const oy = py - (SPRITE_H * SCALE) / 2;
+    // ========= 玩家繪製（簡易像素風） =========
+    function drawPlayer(){
+      const px = player.x, py = player.y;
 
-      ctx.save();
-      ctx.translate(ox, oy);
+      ctx.fillStyle="#facc99";
+      ctx.fillRect(px-6, py-14, 12, 12);
 
-      function pRect(x, y, w, h, color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x * SCALE, y * SCALE, w * SCALE, h * SCALE);
+      ctx.fillStyle="#111";
+      if (player.dir==="left") ctx.fillRect(px-4, py-10, 2,2);
+      else if (player.dir==="right") ctx.fillRect(px+2, py-10, 2,2);
+      else {
+        ctx.fillRect(px-4, py-10, 2,2);
+        ctx.fillRect(px+2, py-10, 2,2);
       }
 
-      ctx.globalAlpha = 0.3;
-      ctx.beginPath();
-      ctx.ellipse(
-        SPRITE_W * SCALE / 2,
-        SPRITE_H * SCALE - 4,
-        10 * SCALE,
-        4 * SCALE,
-        0,
-        0,
-        Math.PI * 2
-      );
-      ctx.fillStyle = "#000";
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
-      const stepOffset = player.moving && player.frame === 1 ? 1 : 0;
-
-      pRect(4, 0, 8, 2, "#020617");
-      pRect(3, 2, 10, 2, "#020617");
-
-      pRect(4, 4, 8, 4, "#facc99");
-
-      pRect(3, 4, 1, 4, "#020617");
-      pRect(12, 4, 1, 4, "#020617");
-
-      if (player.dir === "left") {
-        pRect(5, 5, 1, 1, "#111827");
-      } else if (player.dir === "right") {
-        pRect(10, 5, 1, 1, "#111827");
-      } else {
-        pRect(5, 5, 1, 1, "#111827");
-        pRect(10, 5, 1, 1, "#111827");
-      }
-
-      const cloakColor = "#1e293b";
-      const trimColor = "#f97316";
-
-      pRect(3, 8, 10, 6, cloakColor);
-      pRect(4, 8, 1, 6, cloakColor);
-      pRect(11, 8, 1, 6, cloakColor);
-
-      pRect(3, 9, 1, 1, trimColor);
-      pRect(12, 9, 1, 1, trimColor);
-      pRect(7, 9, 2, 1, trimColor);
-
-      const legColor = "#0f172a";
-      if (player.dir === "left" || player.dir === "right") {
-        if (stepOffset === 0) {
-          pRect(5, 14, 2, 4, legColor);
-          pRect(9, 14, 2, 4, legColor);
-        } else {
-          pRect(4, 14, 2, 4, legColor);
-          pRect(10, 14, 2, 4, legColor);
-        }
-      } else {
-        if (stepOffset === 0) {
-          pRect(5, 14, 2, 4, legColor);
-          pRect(9, 14, 2, 4, legColor);
-        } else {
-          pRect(4, 14, 2, 4, legColor);
-          pRect(10, 14, 2, 4, legColor);
-        }
-      }
-
-      ctx.restore();
+      ctx.fillStyle="#334155";
+      ctx.fillRect(px-7, py-2, 14, 14);
     }
 
-    function update(dt) {
+    // ========= 更新玩家位置 =========
+    function update(dt){
       if (anyModalOpen()) {
         player.moving = false;
-        hudHint.textContent = "Press ESC / ✕ / close button.";
         return;
       }
 
-      let dx = 0;
-      let dy = 0;
+      let dx=0, dy=0;
 
-      // Keyboard
-      if (keys.has("ArrowUp") || keys.has("w") || keys.has("W")) {
-        dy -= 1;
-      }
-      if (keys.has("ArrowDown") || keys.has("s") || keys.has("S")) {
-        dy += 1;
-      }
-      if (keys.has("ArrowLeft") || keys.has("a") || keys.has("A")) {
-        dx -= 1;
-      }
-      if (keys.has("ArrowRight") || keys.has("d") || keys.has("D")) {
-        dx += 1;
-      }
+      if (keys.has("ArrowUp") || keys.has("w")) dy -= 1;
+      if (keys.has("ArrowDown") || keys.has("s")) dy += 1;
+      if (keys.has("ArrowLeft") || keys.has("a")) dx -= 1;
+      if (keys.has("ArrowRight") || keys.has("d")) dx += 1;
 
-      // Joystick（touch 時生效）
+      // 搖桿加成
       if (joystickActive) {
-        dx += joystickVec.x;
-        dy += joystickVec.y;
-
-        if (Math.abs(joystickVec.x) > Math.abs(joystickVec.y)) {
-          player.dir = joystickVec.x > 0 ? "right" : "left";
-        } else if (Math.abs(joystickVec.y) > 0.01) {
-          player.dir = joystickVec.y > 0 ? "down" : "up";
-        }
-      } else {
-        if (dx < 0) player.dir = "left";
-        if (dx > 0) player.dir = "right";
-        if (dy < 0) player.dir = "up";
-        if (dy > 0) player.dir = "down";
+        dx += joyVec.x;
+        dy += joyVec.y;
       }
 
-      player.moving = dx !== 0 || dy !== 0;
+      if (dx!==0 || dy!==0){
+        const len = Math.hypot(dx,dy) || 1;
+        dx/=len; dy/=len;
 
-      if (dx !== 0 || dy !== 0) {
-        const len = Math.hypot(dx, dy) || 1;
-        dx /= len;
-        dy /= len;
-        player.x += dx * player.speed;
-        player.y += dy * player.speed;
+        player.x += dx*player.speed;
+        player.y += dy*player.speed;
 
-        const margin = 30;
-        player.x = Math.max(margin, Math.min(WIDTH - margin, player.x));
-        player.y = Math.max(margin, Math.min(HEIGHT - margin, player.y));
+        if (Math.abs(dx) > Math.abs(dy))
+          player.dir = dx>0 ? "right":"left";
+        else
+          player.dir = dy>0 ? "down":"up";
 
-        player.frameTimer += dt;
-        if (player.frameTimer >= player.frameInterval) {
-          player.frameTimer = 0;
-          player.frame = (player.frame + 1) % 2;
-        }
+        player.moving = true;
       } else {
-        player.frame = 0;
-        player.frameTimer = 0;
+        player.moving = false;
       }
 
-      nearObject = null;
-      const interactionRadius = 60;
-      for (const obj of objects) {
-        const cx = obj.x + obj.w / 2;
-        const cy = obj.y + obj.h / 2;
-        const dist = Math.hypot(player.x - cx, player.y - cy);
-        if (dist < interactionRadius) {
-          nearObject = obj;
-          break;
+      // 邊界
+      player.x = Math.max(20, Math.min(WIDTH-20, player.x));
+      player.y = Math.max(20, Math.min(HEIGHT-20, player.y));
+
+      // 互動物件偵測
+      nearObj = null;
+      for(const o of objects){
+        const cx = o.x + o.w/2;
+        const cy = o.y + o.h/2;
+        const dist = Math.hypot(player.x-cx, player.y-cy);
+        if(dist < 60){
+          nearObj = o;
+          hudHint.textContent = `E → ${o.label}`;
+          return;
         }
       }
-
-      if (nearObject) {
-        hudHint.textContent =
-          nearObject.hint + " (" + nearObject.label + ") · press E";
-      } else {
-        hudHint.textContent = "";
-      }
+      hudHint.textContent="";
     }
 
-    function draw() {
+    // ========= 主迴圈 =========
+    let last=0;
+    function loop(t){
+      const dt = t-last;
+      last=t;
+      update(dt);
       drawMap();
       objects.forEach(drawObject);
       drawPlayer();
-    }
-
-    function loop(timestamp) {
-      const dt = timestamp - lastTime;
-      lastTime = timestamp;
-      update(dt);
-      draw();
       requestAnimationFrame(loop);
     }
-
     requestAnimationFrame(loop);
 
-    // ======== MODALS ========
-
-    function openModal(id) {
+    // ========= Modal 開關 =========
+    function openModal(id){
       const el = document.getElementById(id);
       if (!el) return;
-      el.classList.add("visible");
+      el.style.display="flex";
     }
-
-    function closeAllModals() {
-      document.querySelectorAll(".modal-backdrop.visible").forEach((el) => {
-        el.classList.remove("visible");
-      });
+    function closeAll(){
+      document.querySelectorAll(".modal-backdrop").forEach(m=>m.style.display="none");
     }
+    document.querySelectorAll("[data-close]").forEach(btn=>{
+      btn.addEventListener("click", closeAll);
+    });
 
-    document.querySelectorAll("[data-close]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        closeAllModals();
+    // 點背景關閉
+    document.querySelectorAll(".modal-backdrop").forEach(back=>{
+      back.addEventListener("click", e=>{
+        if(e.target === back) closeAll();
       });
     });
 
-    document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
-      backdrop.addEventListener("click", (e) => {
-        if (e.target === backdrop) {
-          closeAllModals();
-        }
-      });
-    });
+    // ========= 手機搖桿邏輯 =========
+    const isTouch = "ontouchstart" in window;
+    if (isTouch) document.body.classList.add("touch");
 
-    // ======== Joystick 控制 ========
+    const joystick = document.getElementById("joystick");
+    const joyInner = document.getElementById("joystickInner");
+    const btnInteract = document.getElementById("btnInteract");
 
-    if (isTouchDevice) {
-      const maxRadius = 48; // 搖桿最大半徑（px）
-      let baseX = 0;
-      let baseY = 0;
+    let joystickActive = false;
+    let joyVec = {x:0, y:0};
 
-      function resetJoystick() {
-        joystickActive = false;
-        joystickVec = { x: 0, y: 0 };
-        joystickInner.style.transform = "translate(0px, 0px)";
-      }
+    const maxRadius = 30;  // 🔥 搖桿縮小後的最佳半徑
 
-      function handleJoystickTouch(ev) {
-        const touch = ev.touches[0];
-        if (!touch) return;
-        const rect = joystick.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
+    function handleJoystick(ev){
+      const touch = ev.touches[0];
+      if(!touch) return;
 
-        const dx = touch.clientX - cx;
-        const dy = touch.clientY - cy;
-        const dist = Math.min(Math.hypot(dx, dy), maxRadius);
+      const rect = joystick.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
 
-        const normX = dist === 0 ? 0 : dx / dist;
-        const normY = dist === 0 ? 0 : dy / dist;
+      const dx = touch.clientX - cx;
+      const dy = touch.clientY - cy;
 
-        joystickActive = true;
-        joystickVec = { x: normX, y: normY };
+      const dist = Math.min(Math.hypot(dx,dy), maxRadius);
+      const nx = dx / (dist || 1);
+      const ny = dy / (dist || 1);
 
-        const innerX = normX * (dist / 2);
-        const innerY = normY * (dist / 2);
-        joystickInner.style.transform = `translate(${innerX}px, ${innerY}px)`;
-      }
+      joystickActive = true;
+      joyVec = {x:nx, y:ny};
 
-      joystick.addEventListener(
-        "touchstart",
-        (ev) => {
-          ev.preventDefault();
-          handleJoystickTouch(ev);
-        },
-        { passive: false }
-      );
-
-      joystick.addEventListener(
-        "touchmove",
-        (ev) => {
-          ev.preventDefault();
-          handleJoystickTouch(ev);
-        },
-        { passive: false }
-      );
-
-      joystick.addEventListener(
-        "touchend",
-        (ev) => {
-          ev.preventDefault();
-          resetJoystick();
-        },
-        { passive: false }
-      );
-
-      joystick.addEventListener(
-        "touchcancel",
-        (ev) => {
-          ev.preventDefault();
-          resetJoystick();
-        },
-        { passive: false }
-      );
-
-      // 手機 E 按鈕
-      btnInteract.addEventListener("click", () => {
-        if (nearObject && !anyModalOpen()) {
-          openModal(nearObject.modalId);
-        }
-      });
-
-      btnInteract.addEventListener(
-        "touchstart",
-        (ev) => {
-          ev.preventDefault();
-          if (nearObject && !anyModalOpen()) {
-            openModal(nearObject.modalId);
-          }
-        },
-        { passive: false }
-      );
+      joyInner.style.transform = `translate(${nx*dist/2}px, ${ny*dist/2}px)`;
     }
+
+    function resetJoystick(){
+      joystickActive=false;
+      joyVec={x:0,y:0};
+      joyInner.style.transform="translate(0,0)";
+    }
+
+    joystick.addEventListener("touchstart", e=>{e.preventDefault(); handleJoystick(e);}, {passive:false});
+    joystick.addEventListener("touchmove",  e=>{e.preventDefault(); handleJoystick(e);}, {passive:false});
+    joystick.addEventListener("touchend",   ()=> resetJoystick());
+    joystick.addEventListener("touchcancel",()=> resetJoystick());
+
+    // E 按鈕（手機）
+    btnInteract.addEventListener("touchstart", e=>{
+      e.preventDefault();
+      openIfNear();
+    }, {passive:false});
+
   </script>
+
 </body>
 </html>
