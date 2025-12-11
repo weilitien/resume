@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wei Li Tien – SDET RPG Map Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: #020617;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.2);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #0b1120, #020617 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 0.75rem;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 960px;
+      background: radial-gradient(circle at top left, #111827, #020617 60%);
+      border-radius: 20px;
+      box-shadow:
+        0 25px 50px rgba(15, 23, 42, 0.95),
+        0 0 0 1px rgba(148, 163, 184, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 1.1rem 1.3rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-main {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: radial-gradient(circle at top, #f97316, #7c2d12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #111827;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
+      font-size: 1rem;
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .header-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .header-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .header-pill {
+      font-size: 0.72rem;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(249, 115, 22, 0.6);
+      background: rgba(15, 23, 42, 0.85);
+      color: #fed7aa;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+
+    .panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 820px) {
+      .panel {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .canvas-wrapper {
+      background: radial-gradient(circle at top, #0b1120, #020617 65%);
+      border-radius: 16px;
+      box-shadow:
+        inset 0 0 0 1px rgba(15, 23, 42, 0.7),
+        0 18px 40px rgba(15, 23, 42, 0.95);
+      padding: 0.75rem;
+      border: 1px solid rgba(30, 64, 175, 0.55);
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #020617;
+      border-radius: 12px;
+      image-rendering: pixelated;
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.9),
+        inset 0 0 0 1px rgba(15, 23, 42, 0.7);
+    }
+
+    .hud {
+      position: absolute;
+      left: 0.95rem;
+      bottom: 0.7rem;
+      right: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .hud span {
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.96), #020617);
+      border-radius: 999px;
+      padding: 0.18rem 0.6rem;
+      border: 1px solid rgba(51, 65, 85, 0.7);
+      pointer-events: auto;
+    }
+
+    .hud-keys {
+      display: flex;
+      gap: 0.3rem;
+      align-items: center;
+    }
+
+    .key {
+      display: inline-flex;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      font-size: 0.6rem;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    .info-panel {
+      border-radius: 16px;
+      background: radial-gradient(circle at top left, #020617, #020617 70%);
+      box-shadow:
+        inset 0 0 0 1px rgba(15, 23, 42, 0.9),
+        0 18px 40px rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(30, 64, 175, 0.5);
+      padding: 0.85rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+    }
+
+    .info-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.1rem;
+    }
+
+    .info-desc {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.45rem;
+      margin-top: 0.4rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .legend-color.about { background: #0ea5e9; }
+    .legend-color.skills { background: #22c55e; }
+    .legend-color.projects { background: #f97316; }
+    .legend-color.contact { background: #a855f7; }
+
+    .small-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Modal */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .modal-backdrop.visible {
+      display: flex;
+    }
+
+    .modal {
+      width: min(540px, 100% - 2.5rem);
+      background: radial-gradient(circle at top left, #111827, #020617 70%);
+      border-radius: 18px;
+      box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.96),
+        0 0 0 1px rgba(148, 163, 184, 0.6);
+      border: 1px solid rgba(30, 64, 175, 0.7);
+      padding: 0.9rem 1rem 1rem;
+      position: relative;
+      max-height: 80vh;
+      overflow: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .modal-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .modal-tag {
+      font-size: 0.72rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--text-muted);
+    }
+
+    .modal-close {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .modal-close:hover {
+      background: #f97316;
+      color: #111827;
+      border-color: #fed7aa;
+    }
+
+    .modal-body {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .modal-body p + p {
+      margin-top: 0.4rem;
+    }
+
+    .modal-list {
+      margin-top: 0.5rem;
+      padding-left: 1.1rem;
+    }
+
+    .modal-list li {
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-group-title {
+      margin-top: 0.6rem;
+      font-size: 0.82rem;
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .footer {
+      margin-top: 0.1rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="header">
+      <div class="header-main">
+        <div class="avatar">W</div>
+        <div class="header-text">
+          <div class="header-title">Wei Li Tien</div>
+          <div class="header-sub">SDET · QA Automation & AI-assisted Testing</div>
+        </div>
+      </div>
+      <div class="header-pill">
+        <span>RPG Map Portfolio</span>
+        <span>🎮</span>
+      </div>
+    </header>
+
+    <div class="panel">
+      <div class="canvas-wrapper">
+        <canvas id="game" width="640" height="400"></canvas>
+        <div class="hud">
+          <span>
+            <strong>Controls</strong>:
+            <span class="hud-keys">
+              <span class="key">W</span>
+              <span class="key">A</span>
+              <span class="key">S</span>
+              <span class="key">D</span>
+              <span style="margin: 0 0.1rem;">or</span>
+              <span class="key">↑</span>
+              <span class="key">←</span>
+              <span class="key">↓</span>
+              <span class="key">→</span>
+              <span style="margin-left:0.25rem;">·</span>
+              <span class="key">E</span>
+              <span>interact</span>
+            </span>
+          </span>
+          <span id="hudHint"></span>
+        </div>
+      </div>
+
+      <aside class="info-panel">
+        <div>
+          <div class="info-title">SDET World Map</div>
+          <p class="info-desc">
+            Move the pixel character around this tiny SDET world. Each object
+            represents part of my portfolio: a signpost for About, a tree for
+            Skills, a server rack for Projects and a mailbox for Contact.
+            Walk next to them and press <strong>E</strong> to open.
+          </p>
+        </div>
+
+        <div>
+          <div class="modal-group-title">Legend</div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-color about"></div>
+              <span>Signpost · About</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color skills"></div>
+              <span>Skill Tree · Skills</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color projects"></div>
+              <span>Server Rack · Projects</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color contact"></div>
+              <span>Mailbox · Contact</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="modal-group-title">What this shows</div>
+          <p class="info-desc">
+            This interactive map is a playful way to present my work as an
+            SDET — combining automation, infrastructure and AI-assisted testing
+            into a small RPG-style demo.
+          </p>
+          <p class="small-note">
+            This is a simple vanilla HTML + Canvas + JavaScript prototype with
+            no external libraries.
+          </p>
+        </div>
+
+        <div class="footer">
+          Built as a playful portfolio demo · © <span id="year"></span> Wei Li Tien
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Modal: About -->
+  <div class="modal-backdrop" id="modal-about">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">About Me</div>
+          <div class="modal-tag">🪧 About</div>
+        </div>
+        <button class="modal-close" data-close>✕</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          I’m <strong>Wei Li Tien</strong>, an SDET / QA Automation Engineer
+          focused on building reliable test pipelines across virtualized
+          environments, legacy Windows and Linux platforms.
+        </p>
+        <p>
+          My daily work includes regression testing, smoke tests, API validation,
+          and maintaining Jenkins pipelines. I enjoy connecting infrastructure,
+          tooling and automation to keep things stable and observable.
+        </p>
+        <p>
+          Recently, I’ve been actively integrating <strong>AI tools</strong> into
+          my workflow — from generating test cases with templates, to debugging
+          scripts, and designing clear system flow diagrams to help teams align
+          faster.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Skills -->
+  <div class="modal-backdrop" id="modal-skills">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Skills</div>
+          <div class="modal-tag">🌳 Skills</div>
+        </div>
+        <button class="modal-close" data-close>✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-group-title">Automation & Testing</div>
+        <ul class="modal-list">
+          <li>Python-based automation for API, UI, regression and smoke tests.</li>
+          <li><strong>pytest</strong> + <strong>Allure</strong> for structured tests and rich reporting.</li>
+          <li>Agent / backend flows across multiple OS and VMs.</li>
+        </ul>
+
+        <div class="modal-group-title">CI/CD & Reporting</div>
+        <ul class="modal-list">
+          <li>Jenkins pipelines triggering regression and smoke jobs.</li>
+          <li>HTML report generation and <strong>Microsoft Teams</strong> webhook notifications.</li>
+          <li>Troubleshooting failed builds, flaky tests and environment issues.</li>
+        </ul>
+
+        <div class="modal-group-title">AI-Assisted Testing</div>
+        <ul class="modal-list">
+          <li>Using LLMs to generate test cases from a standard template.</li>
+          <li>Prompt engineering for consistent test case structure.</li>
+          <li>AI-assisted code review and log analysis for faster debugging.</li>
+        </ul>
+
+        <div class="modal-group-title">Infrastructure & Tools</div>
+        <ul class="modal-list">
+          <li>VMware vSphere / vCenter lab maintenance and template management.</li>
+          <li>PowerCLI tooling for datastore scanning and VM management.</li>
+          <li>Windows & Linux environments for testing and automation.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Projects -->
+  <div class="modal-backdrop" id="modal-projects">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Selected Projects</div>
+          <div class="modal-tag">🖥️ Projects</div>
+        </div>
+        <button class="modal-close" data-close>✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-group-title">Regression Automation Pipeline</div>
+        <p>
+          Orchestrates multi-VM regression flows: provisioning VMs, installing
+          agents, running smoke tests and exporting Allure reports with Teams
+          notifications. Helps standardize and automate regression as SDET work.
+        </p>
+
+        <div class="modal-group-title">Template-Driven AI Test Case Generator</div>
+        <p>
+          Uses a standard test case template and LLM prompts to generate positive,
+          negative and edge-case API scenarios. The output is converted into
+          YAML/JSON used for <strong>pytest parametrize</strong>, speeding up
+          test design significantly.
+        </p>
+
+        <div class="modal-group-title">Datastore Orphan VM & Template Detector</div>
+        <p>
+          Scans VMware datastores to detect orphaned VM folders and renamed
+          templates, generating HTML reports integrated into a Jenkins
+          maintenance job. This improves lab hygiene and storage usage.
+        </p>
+
+        <div class="modal-group-title">AI-assisted Flow Diagrams & Troubleshooting</div>
+        <p>
+          Uses AI tools to draft clear regression flow diagrams, component update
+          flows and to help analyze logs when pipelines fail. These visuals and
+          insights make it easier to collaborate with developers and PMs.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Contact -->
+  <div class="modal-backdrop" id="modal-contact">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Contact</div>
+          <div class="modal-tag">📮 Get in touch</div>
+        </div>
+        <button class="modal-close" data-close>✕</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          If you’re interested in SDET / QA automation, AI-assisted testing, or
+          building more stable regression pipelines, feel free to reach out.
+        </p>
+        <ul class="modal-list">
+          <li><strong>Email:</strong> godlisi@hotmail.com</li>
+          <li><strong>Location:</strong> Taiwan</li>
+          <li><strong>Open to:</strong> On-site or remote roles.</li>
+        </ul>
+        <p>
+          This map is just one example — I’m happy to walk through the underlying
+          automation / design and discuss how it can fit into your team.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dynamic year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ======== GAME LOGIC (Canvas) ========
+
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+
+    const hudHint = document.getElementById("hudHint");
+
+    const WIDTH = canvas.width;
+    const HEIGHT = canvas.height;
+
+    const TILE = 32;
+
+    // Player config
+    const SCALE = 2;
+    const SPRITE_W = 16;
+    const SPRITE_H = 24;
+
+    const player = {
+      x: WIDTH / 2,
+      y: HEIGHT / 2,
+      speed: 2.1,
+      dir: "down",
+      moving: false,
+      frame: 0,
+      frameTimer: 0,
+      frameInterval: 180,
+    };
+
+    // World objects (四個不同物件 + 標籤)
+    const objects = [
+      {
+        id: "about",
+        kind: "sign",
+        label: "About",
+        x: 110,
+        y: 80,
+        w: 60,
+        h: 60,
+        color: "#0ea5e9",
+        modalId: "modal-about",
+        hint: "Read sign",
+      },
+      {
+        id: "skills",
+        kind: "tree",
+        label: "Skills",
+        x: WIDTH - 170,
+        y: 70,
+        w: 70,
+        h: 90,
+        color: "#22c55e",
+        modalId: "modal-skills",
+        hint: "Inspect skill tree",
+      },
+      {
+        id: "projects",
+        kind: "rack",
+        label: "Projects",
+        x: 110,
+        y: HEIGHT - 150,
+        w: 80,
+        h: 80,
+        color: "#f97316",
+        modalId: "modal-projects",
+        hint: "Inspect server rack",
+      },
+      {
+        id: "contact",
+        kind: "mailbox",
+        label: "Contact",
+        x: WIDTH - 160,
+        y: HEIGHT - 140,
+        w: 50,
+        h: 70,
+        color: "#a855f7",
+        modalId: "modal-contact",
+        hint: "Open mailbox",
+      },
+    ];
+
+    const keys = new Set();
+    let lastTime = performance.now();
+    let nearObject = null;
+
+    window.addEventListener("keydown", (e) => {
+      if (
+        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d", "W", "A", "S", "D"].includes(e.key)
+      ) {
+        e.preventDefault();
+      }
+      keys.add(e.key);
+
+      if (e.key === "e" || e.key === "E" || e.key === "Enter") {
+        if (nearObject && !anyModalOpen()) {
+          openModal(nearObject.modalId);
+        }
+      }
+
+      if (e.key === "Escape") {
+        closeAllModals();
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      keys.delete(e.key);
+    });
+
+    function anyModalOpen() {
+      return document.querySelector(".modal-backdrop.visible") !== null;
+    }
+
+    // Map drawing
+    function drawMap() {
+      const g = ctx.createLinearGradient(0, 0, 0, HEIGHT);
+      g.addColorStop(0, "#020617");
+      g.addColorStop(1, "#020617");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+      ctx.strokeStyle = "rgba(15,23,42,0.7)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= WIDTH; x += TILE) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, HEIGHT);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= HEIGHT; y += TILE) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(WIDTH, y);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(15,23,42,0.8)";
+      ctx.fillRect(TILE, TILE, WIDTH - TILE * 2, HEIGHT - TILE * 2);
+    }
+
+    function drawObject(obj) {
+      ctx.save();
+
+      if (obj.kind === "sign") {
+        // 路牌
+        const cx = obj.x + obj.w / 2;
+        const top = obj.y + 10;
+
+        // 柱子
+        ctx.fillStyle = "#854d0e";
+        ctx.fillRect(cx - 3, top + 14, 6, 26);
+
+        // 木板
+        ctx.fillStyle = "#ca8a04";
+        ctx.fillRect(cx - 28, top, 56, 16);
+        ctx.strokeStyle = "rgba(0,0,0,0.35)";
+        ctx.strokeRect(cx - 28, top, 56, 16);
+
+        // 小標籤文字
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "9px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("About", cx, top + 8);
+      } else if (obj.kind === "tree") {
+        // 技能大樹
+        const cx = obj.x + obj.w / 2;
+        const baseY = obj.y + obj.h;
+
+        // 樹幹
+        ctx.fillStyle = "#713f12";
+        ctx.fillRect(cx - 8, baseY - 40, 16, 32);
+
+        // 樹冠
+        ctx.fillStyle = "#16a34a";
+        ctx.beginPath();
+        ctx.arc(cx, baseY - 52, 24, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#22c55e";
+        ctx.beginPath();
+        ctx.arc(cx - 10, baseY - 56, 12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx + 10, baseY - 50, 10, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 小標籤
+        ctx.fillStyle = "rgba(15,23,42,0.9)";
+        ctx.fillRect(cx - 24, baseY - 12, 48, 14);
+        ctx.strokeStyle = "rgba(148,163,184,0.7)";
+        ctx.strokeRect(cx - 24, baseY - 12, 48, 14);
+        ctx.fillStyle = "#e5e7eb";
+        ctx.font = "9px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Skills", cx, baseY - 5);
+      } else if (obj.kind === "rack") {
+        // 伺服器機櫃
+        const x = obj.x + 10;
+        const y = obj.y + 8;
+        const w = obj.w - 20;
+        const h = obj.h - 18;
+
+        ctx.fillStyle = "#020617";
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = obj.color;
+        ctx.strokeRect(x, y, w, h);
+
+        // 橫條
+        for (let i = 0; i < 3; i++) {
+          const ry = y + 8 + i * 16;
+          ctx.fillStyle = "#0f172a";
+          ctx.fillRect(x + 4, ry, w - 8, 10);
+
+          ctx.fillStyle = "#e5e7eb";
+          ctx.fillRect(x + 6, ry + 3, 12, 4);
+          ctx.fillStyle = "#22c55e";
+          ctx.fillRect(x + w - 14, ry + 3, 6, 4);
+        }
+
+        // 小標籤
+        ctx.fillStyle = "rgba(15,23,42,0.9)";
+        ctx.fillRect(x + w / 2 - 30, y + h + 2, 60, 14);
+        ctx.strokeStyle = "rgba(148,163,184,0.7)";
+        ctx.strokeRect(x + w / 2 - 30, y + h + 2, 60, 14);
+        ctx.fillStyle = "#e5e7eb";
+        ctx.font = "9px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Projects", x + w / 2, y + h + 9);
+      } else if (obj.kind === "mailbox") {
+        // 郵箱
+        const cx = obj.x + obj.w / 2;
+        const baseY = obj.y + obj.h;
+
+        // 桿子
+        ctx.fillStyle = "#374151";
+        ctx.fillRect(cx - 3, baseY - 26, 6, 22);
+
+        // 箱體
+        ctx.fillStyle = "#a855f7";
+        ctx.fillRect(cx - 10, baseY - 40, 20, 14);
+        ctx.fillStyle = "#c4b5fd";
+        ctx.fillRect(cx - 8, baseY - 38, 16, 6);
+
+        // 投口
+        ctx.fillStyle = "#111827";
+        ctx.fillRect(cx - 7, baseY - 35, 14, 3);
+
+        // 小標籤
+        ctx.fillStyle = "rgba(15,23,42,0.9)";
+        ctx.fillRect(cx - 26, baseY - 12, 52, 14);
+        ctx.strokeStyle = "rgba(148,163,184,0.7)";
+        ctx.strokeRect(cx - 26, baseY - 12, 52, 14);
+        ctx.fillStyle = "#e5e7eb";
+        ctx.font = "9px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Contact", cx, baseY - 5);
+      }
+
+      ctx.restore();
+    }
+
+    function drawPlayer() {
+      const px = player.x;
+      const py = player.y;
+      const ox = px - (SPRITE_W * SCALE) / 2;
+      const oy = py - (SPRITE_H * SCALE) / 2;
+
+      ctx.save();
+      ctx.translate(ox, oy);
+
+      function pRect(x, y, w, h, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x * SCALE, y * SCALE, w * SCALE, h * SCALE);
+      }
+
+      // Shadow
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      ctx.ellipse(
+        SPRITE_W * SCALE / 2,
+        SPRITE_H * SCALE - 4,
+        10 * SCALE,
+        4 * SCALE,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fillStyle = "#000";
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      const stepOffset = player.moving && player.frame === 1 ? 1 : 0;
+
+      // Hair
+      pRect(4, 0, 8, 2, "#020617");
+      pRect(3, 2, 10, 2, "#020617");
+
+      // Face
+      pRect(4, 4, 8, 4, "#facc99");
+
+      // Hair sides
+      pRect(3, 4, 1, 4, "#020617");
+      pRect(12, 4, 1, 4, "#020617");
+
+      // Eyes
+      if (player.dir === "left") {
+        pRect(5, 5, 1, 1, "#111827");
+      } else if (player.dir === "right") {
+        pRect(10, 5, 1, 1, "#111827");
+      } else {
+        pRect(5, 5, 1, 1, "#111827");
+        pRect(10, 5, 1, 1, "#111827");
+      }
+
+      // Cloak / robe
+      const cloakColor = "#1e293b";
+      const trimColor = "#f97316";
+
+      pRect(3, 8, 10, 6, cloakColor);
+      pRect(4, 8, 1, 6, cloakColor);
+      pRect(11, 8, 1, 6, cloakColor);
+
+      pRect(3, 9, 1, 1, trimColor);
+      pRect(12, 9, 1, 1, trimColor);
+      pRect(7, 9, 2, 1, trimColor);
+
+      // Legs
+      const legColor = "#0f172a";
+      if (player.dir === "left" || player.dir === "right") {
+        if (stepOffset === 0) {
+          pRect(5, 14, 2, 4, legColor);
+          pRect(9, 14, 2, 4, legColor);
+        } else {
+          pRect(4, 14, 2, 4, legColor);
+          pRect(10, 14, 2, 4, legColor);
+        }
+      } else {
+        if (stepOffset === 0) {
+          pRect(5, 14, 2, 4, legColor);
+          pRect(9, 14, 2, 4, legColor);
+        } else {
+          pRect(4, 14, 2, 4, legColor);
+          pRect(10, 14, 2, 4, legColor);
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function update(dt) {
+      if (anyModalOpen()) {
+        player.moving = false;
+        hudHint.textContent = "Press ESC or ✕ to close panels.";
+        return;
+      }
+
+      let dx = 0;
+      let dy = 0;
+
+      if (keys.has("ArrowUp") || keys.has("w") || keys.has("W")) {
+        dy -= 1;
+        player.dir = "up";
+      }
+      if (keys.has("ArrowDown") || keys.has("s") || keys.has("S")) {
+        dy += 1;
+        player.dir = "down";
+      }
+      if (keys.has("ArrowLeft") || keys.has("a") || keys.has("A")) {
+        dx -= 1;
+        player.dir = "left";
+      }
+      if (keys.has("ArrowRight") || keys.has("d") || keys.has("D")) {
+        dx += 1;
+        player.dir = "right";
+      }
+
+      player.moving = dx !== 0 || dy !== 0;
+
+      if (dx !== 0 || dy !== 0) {
+        const len = Math.hypot(dx, dy) || 1;
+        dx /= len;
+        dy /= len;
+        player.x += dx * player.speed;
+        player.y += dy * player.speed;
+
+        const margin = 30;
+        player.x = Math.max(margin, Math.min(WIDTH - margin, player.x));
+        player.y = Math.max(margin, Math.min(HEIGHT - margin, player.y));
+
+        player.frameTimer += dt;
+        if (player.frameTimer >= player.frameInterval) {
+          player.frameTimer = 0;
+          player.frame = (player.frame + 1) % 2;
+        }
+      } else {
+        player.frame = 0;
+        player.frameTimer = 0;
+      }
+
+      // 物件偵測
+      nearObject = null;
+      const interactionRadius = 60;
+      for (const obj of objects) {
+        const cx = obj.x + obj.w / 2;
+        const cy = obj.y + obj.h / 2;
+        const dist = Math.hypot(player.x - cx, player.y - cy);
+        if (dist < interactionRadius) {
+          nearObject = obj;
+          break;
+        }
+      }
+
+      if (nearObject) {
+        hudHint.textContent =
+          nearObject.hint + " (" + nearObject.label + ") · press E";
+      } else {
+        hudHint.textContent = "";
+      }
+    }
+
+    function draw() {
+      drawMap();
+      objects.forEach(drawObject);
+      drawPlayer();
+    }
+
+    function loop(timestamp) {
+      const dt = timestamp - lastTime;
+      lastTime = timestamp;
+      update(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    requestAnimationFrame(loop);
+
+    // ======== MODALS ========
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add("visible");
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll(".modal-backdrop.visible").forEach((el) => {
+        el.classList.remove("visible");
+      });
+    }
+
+    document.querySelectorAll("[data-close]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        closeAllModals();
+      });
+    });
+
+    document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+      backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) {
+          closeAllModals();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
