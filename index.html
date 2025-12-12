@@ -6,6 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
+
+body.touch .joystick {
+  display: flex;
+}
+
+body.touch .interact-btn {
+  display: flex;
+}
+
+
 body {
   margin: 0;
   background: radial-gradient(circle at top, #0b1120, #020617 60%);
@@ -93,6 +103,15 @@ canvas {
 </head>
 
 <body>
+
+<button id="btnInteract" class="interact-btn"><span>E</span></button>
+
+
+<div id="joystick" class="joystick">
+  <div id="joystickInner" class="joystick-inner"></div>
+</div>
+
+
 <div class="shell">
   <div class="header">
     <div style="display:flex;gap:.6rem;align-items:center;">
@@ -475,6 +494,9 @@ canvas {
     <button onclick="closeAll()">Close</button>
   </div>
 </div>
+
+
+
 
 <script>
 /* ===== Game ===== */
