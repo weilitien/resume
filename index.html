@@ -155,6 +155,34 @@ body.touch .interact-btn {
   display: flex;
 }
 
+/* Base button style */
+.modal button {
+  padding: .4rem .8rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* TxOne = 黑色 */
+#modal-experience button:nth-child(1) {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Barco = 深灰色 */
+#modal-experience button:nth-child(2) {
+  background: #4b5563; /* 深灰色 */
+  color: #ffffff;
+}
+
+/* KaiOS = 深紫色 */
+#modal-experience button:nth-child(3) {
+  background: #8b5cf6; /* 深紫色 */
+  color: #ffffff;
+}
+
+
 
 </style>
 </head>
@@ -216,6 +244,8 @@ body.touch .interact-btn {
     <hr style="border:0; border-top:1px solid rgba(148,163,184,.3); margin:0.8rem 0;">
 
     <!-- Skills -->
+
+    
     <ul style="
       font-size:0.8rem;
       line-height:1.7;
