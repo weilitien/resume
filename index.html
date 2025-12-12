@@ -223,11 +223,11 @@ body.touch .interact-btn {
       padding-left:1rem;
       margin:0;
     ">
-      <li><strong>Automation:</strong> Pytest, Robot Framework</li>
-      <li><strong>Testing Platforms:</strong> Web, REST API, Windows, iOS, Android</li>
-      <li><strong>CI/CD:</strong> Jenkins pipeline integration</li>
-      <li><strong>Test Management:</strong> TestRail, test planning & estimation</li>
-      <li><strong>Testing Types:</strong> Functional, Integration, Regression, Performance, Parallel testing</li>
+  <li><strong>🧪 Automation:</strong> Pytest, Robot Framework</li>
+  <li><strong>🧩 Testing Platforms:</strong> Web, REST API, Windows, iOS, Android</li>
+  <li><strong>⚙️ CI/CD:</strong> Jenkins pipeline integration</li>
+  <li><strong>📊 Test Management:</strong> TestRail, test planning & estimation</li>
+  <li><strong>🔍 Testing Types:</strong> Functional, Integration, Regression, Performance, Parallel testing</li>
       <!-- Certifications -->
 <hr style="border:0; border-top:1px solid rgba(148,163,184,.3); margin:0.8rem 0;">
 
@@ -700,6 +700,8 @@ function drawMap(){
   for(let y=0;y<=400;y+=32){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(640,y);ctx.stroke();}
 }
 
+
+
 function drawObject(o){
   const isNear = (nearObject && nearObject.id === o.id);
 
@@ -795,6 +797,55 @@ if (o.kind === "mail") { // Contact
   ctx.stroke();
 }
 
+if (o.kind === "mail") { // Contact
+  const cx = o.x + 20;
+  const s = 1.2;
+
+  /* --- 信箱本體 --- */
+  ctx.fillStyle = "#a855f7";
+  ctx.fillRect(cx - 10 * s, o.y + 16 * s, 20 * s, 12 * s);
+
+  /* --- 信箱蓋子 --- */
+  ctx.strokeStyle = "#fff";
+  ctx.beginPath();
+  ctx.moveTo(cx - 10 * s, o.y + 16 * s);
+  ctx.lineTo(cx,            o.y + 22 * s);
+  ctx.lineTo(cx + 10 * s, o.y + 16 * s);
+  ctx.stroke();
+
+  /* --- 氣泡文字 Contact me!（只在靠近時顯示） --- */
+  if (isNear) {
+    const bubbleW = 80;
+    const bubbleH = 20;
+
+    // 氣泡框背景
+    ctx.fillStyle = "rgba(15, 23, 42, 0.85)"; // 深色半透明
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+
+    ctx.beginPath();
+    ctx.roundRect(
+      cx - bubbleW / 2,
+      o.y - 28,
+      bubbleW,
+      bubbleH,
+      6
+    );
+    ctx.fill();
+    ctx.stroke();
+
+    // 氣泡文字
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText("Contact me!", cx, o.y - 14);
+  }
+}
+
+
+
+
+
+
   /* ===== Label + E hint (ONLY when near) ===== */
   if (isNear) {
     ctx.shadowBlur = 0;
@@ -821,27 +872,31 @@ if (o.kind === "mail") { // Contact
 
 
 
-function drawPlayer(){
-  const x=player.x;
-  const y=player.y;
+function drawPlayer() {
+  const x = player.x;
+  const y = player.y;
+
+  const s = 1.2; // scale 1.2x
 
   // head
-  ctx.fillStyle="#facc99";
-  ctx.fillRect(x-6,y-16,12,6);
+  ctx.fillStyle = "#facc99";
+  ctx.fillRect(x - 6 * s, y - 16 * s, 12 * s, 6 * s);
 
   // eyes
-  ctx.fillStyle="#111827";
-  ctx.fillRect(x-4,y-14,2,2);
-  ctx.fillRect(x+2,y-14,2,2);
+  ctx.fillStyle = "#111827";
+  ctx.fillRect(x - 4 * s, y - 14 * s, 2 * s, 2 * s);
+  ctx.fillRect(x + 2 * s, y - 14 * s, 2 * s, 2 * s);
 
   // body
-  ctx.fillStyle="#1e293b";
-  ctx.fillRect(x-7,y-10,14,8);
+  ctx.fillStyle = "#1e293b";
+  ctx.fillRect(x - 7 * s, y - 10 * s, 14 * s, 10 * s);
 
   // legs
-  ctx.fillStyle="#0f172a";
-  ctx.fillRect(x-5,y-2,4,6);
-  ctx.fillRect(x+1,y-2,4,6);
+  ctx.fillStyle = "#0f172a";
+  ctx.fillRect(x - 5 * s, y - 2 * s, 4 * s, 6 * s);
+  ctx.fillRect(x + 1 * s, y - 2 * s, 4 * s, 6 * s);
+
+
 
   // name tag
   ctx.font="10px system-ui";
