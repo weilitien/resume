@@ -1,701 +1,731 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Wei Li Tien – SDET RPG Map Portfolio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8" />
+<title>Wei Li Tien – SDET RPG Portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <style>
-    :root {
-      --bg: #020617;
-      --panel: #020617;
-      --accent: #f97316;
-      --accent-soft: rgba(249, 115, 22, 0.2);
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --border-subtle: rgba(148, 163, 184, 0.35);
-    }
+<style>
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #0b1120, #020617 60%);
+  color: #e5e7eb;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+.shell {
+  max-width: 960px;
+  width: 100%;
+  border: 1px solid rgba(148,163,184,.4);
+  border-radius: 18px;
+  padding: 1rem;
+  background: #020617;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #f97316;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+.canvas-wrapper {
+  position: relative;
+  margin-top: .75rem;
+}
+canvas {
+  width: 100%;
+  background: #020617;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,.35);
+  image-rendering: pixelated;
+  outline: none;
+}
+.hud {
+  position: absolute;
+  bottom: .6rem;
+  left: .8rem;
+  right: .8rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: .75rem;
+  color: #9ca3af;
+  pointer-events: none;
+}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top, #0b1120, #020617 60%);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem 0.75rem;
-      touch-action: none;
-    }
-
-    .shell {
-      width: 100%;
-      max-width: 960px;
-      background: radial-gradient(circle at top left, #111827, #020617 60%);
-      border-radius: 20px;
-      padding: 1.1rem 1.3rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      border: 1px solid rgba(148,163,184,0.5);
-      box-shadow:
-        0 25px 50px rgba(15,23,42,0.95),
-        0 0 0 1px rgba(148,163,184,0.4);
-    }
-
-    header.header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .header-main {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-    }
-
-    .avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 11px;
-      background: radial-gradient(circle at top, #f97316, #7c2d12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #111827;
-      font-weight: bold;
-      font-size: 1rem;
-      box-shadow: 0 12px 30px rgba(15,23,42,0.9);
-    }
-
-    .header-text { display: flex; flex-direction: column; }
-    .header-title { font-size: 1rem; font-weight: 600; }
-    .header-sub { font-size: 0.75rem; color: #9ca3af; }
-
-    .header-pill {
-      padding: 0.2rem 0.6rem;
-      font-size: 0.75rem;
-      border-radius: 999px;
-      border: 1px solid rgba(249,115,22,0.6);
-      background: rgba(15,23,42,0.85);
-      color: #fed7aa;
-    }
-
-    .panel {
-      display: grid;
-      grid-template-columns: minmax(0,1.5fr) minmax(0,1.1fr);
-      gap: 1rem;
-    }
-
-    @media (max-width: 820px) {
-      .panel { grid-template-columns: 1fr; }
-    }
-
-    .canvas-wrapper {
-      position: relative;
-      background: radial-gradient(circle at top, #0b1120, #020617 65%);
-      border-radius: 16px;
-      padding: 0.75rem;
-      border: 1px solid rgba(30,64,175,0.5);
-      box-shadow:
-        inset 0 0 0 1px rgba(15,23,42,0.7),
-        0 18px 40px rgba(15,23,42,0.95);
-    }
-
-    canvas {
-      width: 100%;
-      height: auto;
-      background: #020617;
-      border-radius: 12px;
-      image-rendering: pixelated;
-    }
-
-    /* ===== 小虛擬搖桿 ===== */
-
-    body.touch .joystick,
-    body.touch .interact-btn {
-      display: flex;
-    }
-
-    .joystick {
-      display: none;
-      position: absolute;
-      left: 1rem;
-      bottom: 1rem;
-      width: 80px;
-      height: 80px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.7));
-      border: 1px solid rgba(148,163,184,0.6);
-      box-shadow: 0 12px 25px rgba(15,23,42,0.9);
-      align-items: center;
-      justify-content: center;
-      touch-action: none;
-      z-index: 10;
-    }
-
-    .joystick-inner {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top, rgba(249,115,22,0.9), rgba(248,250,252,0.1));
-      box-shadow:
-        0 8px 18px rgba(0,0,0,0.8),
-        0 0 0 1px rgba(15,23,42,0.8);
-      transform: translate(0,0);
-      pointer-events: none;
-    }
-
-    /* ===== 小 E 按鈕 ===== */
-
-    .interact-btn {
-      display: none;
-      position: absolute;
-      right: 1rem;
-      bottom: 1.1rem;
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top, #f97316, #7c2d12);
-      box-shadow:
-        0 10px 25px rgba(0,0,0,0.9),
-        0 0 0 1px rgba(15,23,42,0.9);
-      border: 1px solid #fed7aa;
-      align-items: center;
-      justify-content: center;
-      color: #111827;
-      font-size: 1rem;
-      font-weight: bold;
-      z-index: 10;
-    }
-
-    .interact-btn:active {
-      transform: translateY(1px) scale(0.96);
-    }
-
-    /* HUD */
-    .hud {
-      position: absolute;
-      left: 0.9rem;
-      bottom: 0.6rem;
-      right: 0.9rem;
-      font-size: 0.75rem;
-      color: #94a3b8;
-      display: flex;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-
-    .key {
-      display: inline-flex;
-      width: 18px;
-      height: 18px;
-      font-size: 0.6rem;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      border: 1px solid rgba(148,163,184,0.8);
-    }
-
-  </style>
+/* ===== Modal ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: #0f172a;
+  padding: 1rem;
+  border-radius: 12px;
+  width: min(520px, 90%);
+  border: 1px solid rgba(148,163,184,.4);
+}
+.modal h2 { margin-top: 0; }
+.modal ul { font-size:.85rem; padding-left:1rem; }
+.modal button {
+  margin-top:.8rem;
+  padding:.4rem .8rem;
+  background:#f97316;
+  border:none;
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
-  <!-- 容器 -->
-  <div class="shell">
-
-    <header class="header">
-      <div class="header-main">
-        <div class="avatar">W</div>
-        <div class="header-text">
-          <div class="header-title">Wei Li Tien</div>
-          <div class="header-sub">SDET · Interactive RPG Portfolio</div>
-        </div>
+<div class="shell">
+  <div class="header">
+    <div style="display:flex;gap:.6rem;align-items:center;">
+      <div class="avatar">W</div>
+      <div>
+        <div>Wei Li Tien</div>
+        <div style="font-size:.75rem;color:#9ca3af;">SDET · RPG Portfolio</div>
       </div>
-      <div class="header-pill">RPG Demo 🎮</div>
-    </header>
+    </div>
+    <div>🎮</div>
+  </div>
 
-    <div class="panel">
+  <div class="canvas-wrapper">
+    <canvas id="game" width="640" height="400" tabindex="0"></canvas>
+    <div class="hud">
+      <span>WASD / ↑↓←→ + E</span>
+      <span id="hudHint"></span>
+    </div>
+  </div>
+</div>
 
-      <div class="canvas-wrapper">
-        <canvas id="game" width="640" height="400"></canvas>
+<!-- ===== Modals ===== -->
+<div id="modal-about" class="modal-backdrop">
+  <div class="modal">
+    <h2>👋 About Wei Li</h2>
 
-        <div class="hud">
-          <span><strong>Controls:</strong> WASD / ↑↓←→ + E</span>
-          <span id="hudHint"></span>
-        </div>
+    <!-- Summary -->
+    <p style="font-size:0.9rem; line-height:1.6; color:#e5e7eb;">
+      I am a <strong>Software Test Engineer (SDET)</strong> with
+      <strong>8+ years of experience</strong> in both
+      <strong>automation</strong> and <strong>manual testing</strong>
+      across web, mobile, and RESTful APIs.
+    </p>
 
-        <!-- 小搖桿 -->
-        <div id="joystick" class="joystick">
-          <div id="joystickInner" class="joystick-inner"></div>
-        </div>
+    <p style="font-size:0.85rem; line-height:1.6; color:#cbd5f5;">
+      Previously, I worked as a <strong>Software Engineer</strong> for
+      <strong>4 years</strong>, which gives me a strong foundation in
+      development and system design.  
+      My focus is on ensuring product quality, optimizing testing
+      processes, and delivering reliable user experiences.
+    </p>
 
-        <!-- 小 E 按鈕 -->
-        <button id="btnInteract" class="interact-btn"><span>E</span></button>
-      </div>
+    <!-- Divider -->
+    <hr style="border:0; border-top:1px solid rgba(148,163,184,.3); margin:0.8rem 0;">
+
+    <!-- Skills -->
+    <ul style="
+      font-size:0.8rem;
+      line-height:1.7;
+      color:#cbd5f5;
+      padding-left:1rem;
+      margin:0;
+    ">
+      <li><strong>Automation:</strong> Pytest, Robot Framework</li>
+      <li><strong>Testing Platforms:</strong> Web, REST API, Windows, iOS, Android</li>
+      <li><strong>CI/CD:</strong> Jenkins pipeline integration</li>
+      <li><strong>Test Management:</strong> TestRail, test planning & estimation</li>
+      <li><strong>Testing Types:</strong> Functional, Integration, Regression, Performance, Parallel testing</li>
+      <!-- Certifications -->
+<hr style="border:0; border-top:1px solid rgba(148,163,184,.3); margin:0.8rem 0;">
+
+<p style="font-size:0.85rem; color:#cbd5f5; margin-bottom:0.3rem;">
+  <strong>Certifications & Verifications</strong>
+</p>
+
+<ul style="
+  font-size:0.8rem;
+  line-height:1.6;
+  color:#cbd5f5;
+  padding-left:1rem;
+  margin:0;
+">
+  <li>
+    🏅 <a href="https://www.credly.com/badges/5b49000b-4385-45a0-8536-7d1b53c26be2?source=linked_in_profile"
+         target="_blank"
+         rel="noopener noreferrer"
+         style="color:#38bdf8; text-decoration:none;">
+      Credly Certification
+    </a>
+    <span style="color:#9ca3af;">(Verified Badge)</span>
+  </li>
+  <li>
+    🧪 <a href="https://www.hackerrank.com/certificates/133237cc86f9"
+         target="_blank"
+         rel="noopener noreferrer"
+         style="color:#38bdf8; text-decoration:none;">
+      HackerRank Skill Certification
+    </a>
+    <span style="color:#9ca3af;">(Problem-solving & coding assessment)</span>
+  </li>
+</ul>
+
+    </ul>
+
+    <button onclick="closeAll()" style="margin-top:1rem;">Close</button>
+  </div>
+</div>
 
 
-      <!-- ========= Aside / 說明欄 ========= -->
-      <aside class="info-panel">
-        <div style="margin-bottom:0.4rem;">
-          <div style="font-size:0.9rem;font-weight:600;">SDET World Map</div>
-          <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.2rem;">
-            Walk around this small RPG world. Each object represents an area:
-            <strong>Signpost → About</strong>,
-            <strong>Tree → Skills</strong>,
-            <strong>Server Rack → Projects</strong>,
-            <strong>Mailbox → Contact</strong>.
-          </p>
-        </div>
+<div id="modal-skills" class="modal-backdrop">
+  <div class="modal">
+    <h2>🛠 Skills</h2>
+    <ul>
+      <li>Python</li>
+      <li>Pytest</li>
+      <li>Selenium / Playwright</li>
+      <li>Restful APIs</li>
+      <li>CI/CD (Jenkins) Pipeline</li>
+      <li>VMware / vCenter</li>
+      <li>AI-assisted testing</li>
+    </ul>
+    <button onclick="closeAll()">Close</button>
+  </div>
+</div>
 
-        <div style="margin-top:0.5rem;">
-          <div style="font-weight:600;font-size:0.85rem;">Legend</div>
-          <ul style="font-size:0.78rem;color:#9ca3af;margin-top:0.2rem;line-height:1.35;">
-            <li>🪧 Signpost → About Me</li>
-            <li>🌳 Skill Tree → Skills</li>
-            <li>🖥️ Server Rack → Projects</li>
-            <li>📮 Mailbox → Contact</li>
+<!-- Experience -->
+
+<div id="modal-experience" class="modal-backdrop">
+  <div class="modal">
+   <h2>💼 Experience</h2>
+   <div style="display:flex; flex-direction:column; gap:0.4rem;">
+  <button onclick="openExperience('txone')">TxOne Networks</button>
+  <button onclick="openExperience('barco')">Barco</button>
+  <button onclick="openExperience('kaios')">KaiOS</button>
+</div>
+<button onclick="closeAll()" style="margin-top:0.8rem;">Close</button>
+
+  </div>
+</div>
+
+<!-- TxOne Networks -->
+<div id="modal-txone" class="modal-backdrop">
+  <div class="modal">
+    <h2>TxOne Networks</h2>
+
+    <!-- Role -->
+    <p style="font-size:0.85rem; color:#e5e7eb; margin-bottom:0.4rem;">
+      <strong>Role:</strong> Sr. Software Engineer in Test (SDET)
+    </p>
+
+    <!-- Key Projects -->
+    <div style="margin-bottom:0.6rem;">
+      <p style="font-size:0.85rem; color:#cbd5f5; margin-bottom:0.3rem;">
+        <strong>Key Projects</strong>
+      </p>
+
+      <ul style="
+        font-size:0.8rem;
+        line-height:1.6;
+        color:#cbd5f5;
+        padding-left:1rem;
+        margin:0;
+      ">
+        <!-- Project 1 -->
+        <li>
+          <strong>PIT 594 Legacy System</strong>
+          <ul>
+            <li>
+              Designed and developed a <strong>C++ compiler-based executable</strong>
+              to perform scheduled pattern updates on
+              <strong>Windows 2000</strong> and <strong>Windows XP</strong>.
+            </li>
+            <li>
+              Integrated a <strong>mail server</strong> to automatically verify
+              update results and generate execution reports.
+            </li>
           </ul>
-        </div>
+        </li>
 
-        <div style="margin-top:0.5rem;">
-          <p style="font-size:0.8rem;color:#9ca3af;">
-            Built with HTML5 Canvas + vanilla JavaScript.  
-            This is a lightweight, interactive portfolio.
-          </p>
-        </div>
-      </aside>
-
-    </div> <!-- panel -->
-  </div> <!-- shell -->
-
-  <!-- ========= Modal: About ========= -->
-  <div class="modal-backdrop" id="modal-about" style="
-    position:fixed;inset:0;background:rgba(15,23,42,0.85);
-    display:none;align-items:center;justify-content:center;z-index:40;">
-    <div class="modal" style="
-      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
-      border:1px solid rgba(148,163,184,0.4);">
-      <h2 style="margin:0;font-size:1rem;">🪧 About Me</h2>
-      <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.5rem;">
-        I’m <strong>Wei Li Tien</strong>, an SDET focusing on automation,
-        regression pipelines, test infrastructure, and AI-assisted testing.
-      </p>
-      <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.4rem;">
-        I build automated smoke tests, regression suites, VMware/vCenter workflows,
-        Jenkins pipelines, Allure reporting, and AI-generated test case systems.
-      </p>
-      <button data-close style="
-        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
-        background:#f97316;border:none;color:#111827;font-weight:bold;">
-        Close
-      </button>
-    </div>
-  </div>
-
-  <!-- ========= Modal: Skills ========= -->
-  <div class="modal-backdrop" id="modal-skills" style="
-    position:fixed;inset:0;background:rgba(15,23,42,0.85);
-    display:none;align-items:center;justify-content:center;z-index:40;">
-    <div class="modal" style="
-      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
-      border:1px solid rgba(148,163,184,0.4);">
-      <h2 style="margin:0;font-size:1rem;">🌳 Skills</h2>
-
-      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">Automation</h3>
-      <ul style="font-size:0.8rem;color:#9ca3af;margin-left:1rem;">
-        <li>Python test automation</li>
-        <li>pytest + Allure</li>
-        <li>Multi-VM agent test flows</li>
+        <!-- Project 2 -->
+        <li style="margin-top:0.4rem;">
+          <strong>BVT / Smoke Test Automation Pipeline</strong>
+          <ul>
+            <li>
+              Built and automated the <strong>Build Verification Test (BVT)</strong>
+              process with comprehensive smoke tests.
+            </li>
+            <li>
+              Implemented automation to retrieve <strong>OVA files from NAS</strong>,
+              compare <strong>vCenter versions</strong>, and
+              convert <strong>OVA images into virtual machines</strong>.
+            </li>
+            <li>
+              Executed <strong>WebUI</strong> and <strong>RESTful API</strong>
+              smoke tests to validate core functionalities.
+            </li>
+            <li>
+              Automatically triggered <strong>regression testing</strong>
+              once the build passed BVT validation.
+            </li>
+          </ul>
+        </li>
       </ul>
+      
+    </div>
 
-      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">CI/CD</h3>
-      <ul style="font-size:0.8rem;color:#9ca3af;margin-left:1rem;">
-        <li>Jenkins pipelines</li>
-        <li>HTML regression reports</li>
-        <li>Teams webhook notifications</li>
+    <!-- Additional -->
+    <ul style="
+      font-size:0.8rem;
+      line-height:1.6;
+      color:#cbd5f5;
+      padding-left:1rem;
+      margin-top:0.4rem;
+    ">
+      <li>
+        Maintained and operated <strong>VMware-based test laboratories</strong>.
+      </li>
+      <li>
+        CI/CD for pipeline <strong>OVA converter & Smoke tests & Regression tests</strong>.
+      </li>
+      
+    </ul>
+
+    <button onclick="openModal('modal-experience')" style="margin-top:1rem;">
+      Back
+    </button>
+  </div>
+</div>
+
+
+<!-- Barco -->
+
+<div id="modal-barco" class="modal-backdrop">
+  <div class="modal">
+    <h2>Barco</h2>
+
+    <!-- Role -->
+    <p style="font-size:0.85rem; color:#e5e7eb; margin-bottom:0.4rem;">
+      <strong>Role:</strong> Sr. Software Test Engineer
+    </p>
+
+    <!-- Key Projects -->
+    <div style="margin-bottom:0.6rem;">
+      <p style="font-size:0.85rem; color:#cbd5f5; margin-bottom:0.3rem;">
+        <strong>Key Projects</strong>
+      </p>
+
+      <ul style="
+        font-size:0.8rem;
+        line-height:1.6;
+        color:#cbd5f5;
+        padding-left:1rem;
+        margin:0;
+      ">
+        <!-- Project 1 -->
+        <li>
+          <strong>Automation Framework Bootstrap</strong>
+          <ul>
+            <li>
+              Built an <strong>end-to-end automated testing framework</strong>
+              from scratch using <strong>Pytest</strong> and
+              <strong>PyAutoGUI</strong> for smoke testing.
+            </li>
+            <li>
+              Enabled automated validation for critical user workflows,
+              reducing reliance on repetitive manual testing.
+            </li>
+          </ul>
+        </li>
+
+        <!-- Project 2 -->
+        <li style="margin-top:0.4rem;">
+          <strong>Scrum Tester Lead</strong>
+          <ul>
+            <li>
+              Led an <strong>external testing team</strong> and coordinated
+              daily testing activities within an agile (Scrum) environment.
+            </li>
+            <li>
+              Defined <strong>test plans</strong>, test scenarios,
+              and acceptance criteria to ensure delivery quality.
+            </li>
+          </ul>
+        </li>
+
+        <!-- Project 3 -->
+        <li style="margin-top:0.4rem;">
+          <strong>Windows Application Testing – ClickShare</strong>
+          <ul>
+            <li>
+              Conducted in-depth testing of a <strong>Windows desktop application</strong>,
+              focusing on system-level interactions.
+            </li>
+            <li>
+              Monitored <strong>Windows Event Viewer</strong> to analyze
+              application behavior, system events, and integration issues.
+            </li>
+          </ul>
+        </li>
       </ul>
+    </div>
 
-      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">AI-assisted Testing</h3>
-      <ul style="font-size:0.8rem;color:#9ca3af;margin-left:1rem;">
-        <li>AI-generated test case templates</li>
-        <li>LLM-guided debugging</li>
+    <button onclick="openModal('modal-experience')" style="margin-top:1rem;">
+      Back
+    </button>
+  </div>
+</div>
+
+<!-- KaiOS -->
+
+<div id="modal-kaios" class="modal-backdrop">
+  <div class="modal">
+    <h2>KaiOS</h2>
+
+    <!-- Role -->
+    <p style="font-size:0.85rem; color:#e5e7eb; margin-bottom:0.4rem;">
+      <strong>Role:</strong> Backend Automation Test Engineer
+    </p>
+
+    <!-- Key Projects -->
+    <div style="margin-bottom:0.6rem;">
+      <p style="font-size:0.85rem; color:#cbd5f5; margin-bottom:0.3rem;">
+        <strong>Key Projects</strong>
+      </p>
+
+      <ul style="
+        font-size:0.8rem;
+        line-height:1.6;
+        color:#cbd5f5;
+        padding-left:1rem;
+        margin:0;
+      ">
+        <!-- Project 1 -->
+        <li>
+          <strong>Account Platform</strong>
+          <ul>
+            <li>
+              Tested a <strong>centralized account management system</strong>,
+              similar to an <strong>App Store–style personal account platform</strong>.
+            </li>
+            <li>
+              Designed and executed <strong>RESTful API test scenarios</strong>,
+              covering <strong>SMTP email activation</strong>,
+              <strong>OTP verification</strong>, and
+              <strong>session timeout handling</strong>.
+            </li>
+            <li>
+              Ensured account security and reliability by validating
+              authentication flows and edge cases.
+            </li>
+          </ul>
+        </li>
+
+        <!-- Project 2 -->
+        <li style="margin-top:0.4rem;">
+          <strong>Device Financier</strong>
+          <ul>
+            <li>
+              Tested a <strong>device-centric financing service</strong>
+              with <strong>real-time communication</strong> via
+              <strong>WebSocket servers</strong>.
+            </li>
+            <li>
+              Verified the complete workflow starting from
+              <strong>RESTful API handshake</strong> to
+              <strong>SMS-based confirmation</strong> on physical devices.
+            </li>
+            <li>
+              Utilized an <strong>SMS notification server</strong> as a
+              reliable assertion mechanism to validate device-side behaviors.
+            </li>
+          </ul>
+        </li>
       </ul>
-
-      <button data-close style="
-        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
-        background:#f97316;border:none;color:#111827;font-weight:bold;">
-        Close
-      </button>
     </div>
+
+    <button onclick="openModal('modal-experience')" style="margin-top:1rem;">
+      Back
+    </button>
   </div>
+</div>
 
-  <!-- ========= Modal: Projects ========= -->
-  <div class="modal-backdrop" id="modal-projects" style="
-    position:fixed;inset:0;background:rgba(15,23,42,0.85);
-    display:none;align-items:center;justify-content:center;z-index:40;">
-    <div class="modal" style="
-      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
-      border:1px solid rgba(148,163,184,0.4);">
-      <h2 style="margin:0;font-size:1rem;">🖥️ Projects</h2>
 
-      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">
-        Regression Automation Pipeline
-      </h3>
-      <p style="font-size:0.8rem;color:#9ca3af;">
-        Multi-VM orchestration: install agents, disable RTS, run smoke tests,
-        generate Allure reports and push results to Teams.
-      </p>
 
-      <h3 style="margin-top:0.8rem;font-size:0.85rem;color:#e5e7eb;">
-        Template-driven AI Test Generator
-      </h3>
-      <p style="font-size:0.8rem;color:#9ca3af;">
-        AI-generated test cases from templates (positive, negative, boundary).
-      </p>
 
-      <button data-close style="
-        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
-        background:#f97316;border:none;color:#111827;font-weight:bold;">
-        Close
-      </button>
-    </div>
+<div id="modal-contact" class="modal-backdrop">
+  <div class="modal">
+    <h2>📬 Contact</h2>
+    <p>Email: godlisi@hotmail.com</p>
+    <button onclick="closeAll()">Close</button>
   </div>
+</div>
 
-  <!-- ========= Modal: Contact ========= -->
-  <div class="modal-backdrop" id="modal-contact" style="
-    position:fixed;inset:0;background:rgba(15,23,42,0.85);
-    display:none;align-items:center;justify-content:center;z-index:40;">
-    <div class="modal" style="
-      width:min(520px,90%);background:#0f172a;padding:1rem;border-radius:12px;
-      border:1px solid rgba(148,163,184,0.4);">
-      <h2 style="margin:0;font-size:1rem;">📮 Contact</h2>
-      <p style="font-size:0.8rem;color:#9ca3af;margin-top:0.5rem;">
-        Email: <strong>godlisi@hotmail.com</strong>
-      </p>
-
-      <button data-close style="
-        margin-top:1rem;padding:0.35rem 0.9rem;border-radius:6px;
-        background:#f97316;border:none;color:#111827;font-weight:bold;">
-        Close
-      </button>
-    </div>
-  </div>
+<script>
+/* ===== Game ===== */
+let tick = 0;
 
 
-  <!-- ========= JavaScript（Canvas + 移動 + 搖桿 + Modal） ========= -->
-  <script>
-    const canvas = document.getElementById("game");
-    const ctx = canvas.getContext("2d");
 
-    const WIDTH = canvas.width;
-    const HEIGHT = canvas.height;
 
-    const TILE = 32;
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+canvas.focus();
 
-    const hudHint = document.getElementById("hudHint");
+const hudHint = document.getElementById("hudHint");
 
-    // 玩家
-    const player = {
-      x: WIDTH / 2,
-      y: HEIGHT / 2,
-      speed: 2,
-      dir: "down",
-      moving: false,
-      frame: 0,
-      frameTimer: 0,
-      frameInterval: 180,
-    };
+const player = { x:320, y:200, speed:2.4 };
+const INTERACT_RADIUS = 80;
 
-    // 四個互動物件
-    const objects = [
-      { id:"about",    kind:"sign",    x:110,        y:80,         w:60, h:60, modal:"modal-about",    label:"About" },
-      { id:"skills",   kind:"tree",    x:WIDTH-170,  y:70,         w:70, h:90, modal:"modal-skills",   label:"Skills" },
-      { id:"projects", kind:"rack",    x:110,        y:HEIGHT-150, w:80, h:90, modal:"modal-projects", label:"Projects" },
-      { id:"contact",  kind:"mailbox", x:WIDTH-160,  y:HEIGHT-140, w:50, h:70, modal:"modal-contact",  label:"Contact" }
-    ];
+const objects = [
+  { id:"about", label:"About", x:100, y:80, modal:"modal-about", kind:"sign" },
+  { id:"skills", label:"Skills", x:480, y:80, modal:"modal-skills", kind:"tree" },
+  { id:"experience", label:"Experience", x:100, y:280, modal:"modal-experience", kind:"rack" },
+  { id:"contact", label:"Contact", x:480, y:280, modal:"modal-contact", kind:"mail" }
+];
 
-    const keys = new Set();
-    let nearObj = null;
+let nearObject = null;
+const keys = new Set();
 
-    // ========= PC 鍵盤 =========
-    window.addEventListener("keydown", e => {
-      keys.add(e.key);
-      if (e.key === "e" || e.key==="E") openIfNear();
-    });
 
-    window.addEventListener("keyup", e => keys.delete(e.key));
 
-    function openIfNear(){
-      if (nearObj) openModal(nearObj.modal);
+window.addEventListener("keydown", e => {
+  keys.add(e.key);
+
+  const isInteractKey =
+    e.key === "e" ||
+    e.key === "E" ||
+    e.key === "Enter";
+
+  if (isInteractKey && nearObject) {
+    e.preventDefault(); // 避免 Enter 影響其他 UI
+    openModal(nearObject.modal);
+  }
+});
+
+
+window.addEventListener("keyup", e=>keys.delete(e.key));
+
+function update(){
+  let dx=0,dy=0;
+  if(keys.has("w")||keys.has("ArrowUp")) dy--;
+  if(keys.has("s")||keys.has("ArrowDown")) dy++;
+  if(keys.has("a")||keys.has("ArrowLeft")) dx--;
+  if(keys.has("d")||keys.has("ArrowRight")) dx++;
+  if(dx||dy){
+    const l=Math.hypot(dx,dy)||1;
+    player.x+=dx/l*player.speed;
+    player.y+=dy/l*player.speed;
+  }
+
+  nearObject=null;
+  for(const o of objects){
+    if(Math.hypot(player.x-(o.x+20),player.y-(o.y+20))<INTERACT_RADIUS){
+      nearObject=o; break;
     }
+  }
+  hudHint.textContent = nearObject ? `${nearObject.label} · Press E` : "";
+}
 
-    function anyModalOpen() {
-      return document.querySelector(".modal-backdrop[style*='display: flex']") !== null;
-    }
+function drawMap(){
+  ctx.fillStyle="#020617";
+  ctx.fillRect(0,0,640,400);
+  ctx.strokeStyle="rgba(30,41,59,.4)";
+  for(let x=0;x<=640;x+=32){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,400);ctx.stroke();}
+  for(let y=0;y<=400;y+=32){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(640,y);ctx.stroke();}
+}
 
-    // ========= 畫地圖背景 =========
-    function drawMap() {
-      ctx.fillStyle = "#020617";
-      ctx.fillRect(0,0,WIDTH,HEIGHT);
+function drawObject(o){
+  const isNear = (nearObject && nearObject.id === o.id);
 
-      ctx.strokeStyle="rgba(30,41,59,0.4)";
-      for(let x=0;x<=WIDTH;x+=TILE){
-        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,HEIGHT); ctx.stroke();
-      }
-      for(let y=0;y<=HEIGHT;y+=TILE){
-        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(WIDTH,y); ctx.stroke();
-      }
-    }
+  ctx.save();
 
-    // ========= 各物件繪製 =========
-    function drawObject(o){
-      ctx.save();
+  /* ===== 發光效果 ===== */
+  if (isNear) {
+    const pulse = 2 + Math.sin(tick * 0.1) * 2;
+    ctx.shadowColor = "rgba(249,115,22,0.9)";
+    ctx.shadowBlur = 10 + pulse;
+    ctx.lineWidth = 2;
+  }
 
-      if (o.kind === "sign"){
-        const cx = o.x + o.w/2;
+  /* ===== Icon drawing ===== */
+if (o.kind === "sign") { // About
+  const cx = o.x + 20;
 
-        ctx.fillStyle="#ca8a04";
-        ctx.fillRect(cx-28, o.y+10, 56, 16);
-        ctx.strokeStyle="#111";
-        ctx.strokeRect(cx-28, o.y+10, 56,16);
+  // 立柱
+  ctx.fillStyle = "#78350f";
+  ctx.fillRect(cx - 2, o.y + 18, 4, 20);
 
-        ctx.fillStyle="#111827";
-        ctx.font="10px monospace";
-        ctx.textAlign="center";
-        ctx.fillText("About", cx, o.y+22);
+  // 牌子
+  ctx.save();
+  ctx.translate(cx, o.y + 18);
+  ctx.rotate(-0.05); // 微傾斜
+  ctx.fillStyle = "#ca8a04";
+  ctx.fillRect(-22, -10, 44, 16);
+  ctx.restore();
 
-      } else if (o.kind === "tree"){
-        const cx = o.x + o.w/2;
-        const base = o.y + o.h;
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "10px system-ui";
+  ctx.textAlign = "center";
+  ctx.fillText("About", cx, o.y + 20);
+}
 
-        ctx.fillStyle="#713f12";
-        ctx.fillRect(cx-8, base-40,16,32);
 
-        ctx.fillStyle="#22c55e";
-        ctx.beginPath();
-        ctx.arc(cx, base-55, 25,0,Math.PI*2);
-        ctx.fill();
+ if (o.kind === "tree") { // Skills
+  const cx = o.x + 20;
+  const base = o.y + 40;
 
-        ctx.fillStyle="rgba(2,2,2,0.9)";
-        ctx.fillRect(cx-26, base-12,52,14);
-        ctx.strokeStyle="#94a3b8";
-        ctx.strokeRect(cx-26, base-12,52,14);
-        ctx.fillStyle="#e5e7eb";
-        ctx.font="10px monospace";
-        ctx.textAlign="center";
-        ctx.fillText("Skills", cx, base-2);
+  // 🌬 樹冠擺動（很輕微）
+  const sway = Math.sin(tick * 0.05) * 2;
 
-      } else if (o.kind === "rack"){
-        const x = o.x+10, y=o.y+10, w=o.w-20, h=o.h-20;
+  // 樹幹
+  ctx.fillStyle = "#713f12";
+  ctx.fillRect(cx - 4, base - 16, 8, 18);
 
-        ctx.fillStyle="#111827";
-        ctx.fillRect(x,y,w,h);
-        ctx.strokeStyle="#f97316";
-        ctx.strokeRect(x,y,w,h);
+  // 樹冠（三層）
+  ctx.fillStyle = "#22c55e";
+  ctx.beginPath();
+  ctx.arc(cx + sway, base - 24, 14, 0, Math.PI * 2);
+  ctx.fill();
 
-        for(let i=0;i<3;i++){
-          const ry=y+8+i*16;
-          ctx.fillStyle="#1e293b";
-          ctx.fillRect(x+6, ry, w-12, 10);
-        }
+  ctx.fillStyle = "#16a34a";
+  ctx.beginPath();
+  ctx.arc(cx + sway * 0.6, base - 34, 12, 0, Math.PI * 2);
+  ctx.fill();
 
-        ctx.fillStyle="rgba(2,2,2,0.9)";
-        ctx.fillRect(x+w/2-30, y+h+2, 60, 14);
-        ctx.fillStyle="#e5e7eb";
-        ctx.font="10px monospace";
-        ctx.textAlign="center";
-        ctx.fillText("Projects", x+w/2, y+h+12);
+  ctx.fillStyle = "#15803d";
+  ctx.beginPath();
+  ctx.arc(cx + sway * 0.3, base - 44, 10, 0, Math.PI * 2);
+  ctx.fill();
+}
 
-      } else if (o.kind === "mailbox"){
-        const cx = o.x + o.w/2;
-        const base = o.y + o.h;
 
-        ctx.fillStyle="#6b21a8";
-        ctx.fillRect(cx-12, base-45, 24, 18);
+if (o.kind === "rack") { // Experience
+  const glow = 0.5 + Math.sin(tick * 0.1) * 0.5;
 
-        ctx.fillStyle="#1e293b";
-        ctx.fillRect(cx-26, base-12, 52, 14);
-        ctx.strokeStyle="#94a3b8";
-        ctx.strokeRect(cx-26, base-12, 52,14);
-        ctx.fillStyle="#e5e7eb";
-        ctx.font="10px monospace";
-        ctx.textAlign="center";
-        ctx.fillText("Contact", cx, base-2);
-      }
+  ctx.strokeStyle = "#f97316";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(o.x + 6, o.y + 6, 28, 28);
 
-      ctx.restore();
-    }
+  // 內部燈號
+  ctx.fillStyle = `rgba(249,115,22,${0.3 + glow})`;
+  ctx.fillRect(o.x + 10, o.y + 12, 20, 4);
+  ctx.fillRect(o.x + 10, o.y + 20, 20, 4);
+}
 
-    // ========= 玩家繪製（簡易像素風） =========
-    function drawPlayer(){
-      const px = player.x, py = player.y;
 
-      ctx.fillStyle="#facc99";
-      ctx.fillRect(px-6, py-14, 12, 12);
+if (o.kind === "mail") { // Contact
+  const cx = o.x + 20;
 
-      ctx.fillStyle="#111";
-      if (player.dir==="left") ctx.fillRect(px-4, py-10, 2,2);
-      else if (player.dir==="right") ctx.fillRect(px+2, py-10, 2,2);
-      else {
-        ctx.fillRect(px-4, py-10, 2,2);
-        ctx.fillRect(px+2, py-10, 2,2);
-      }
+  // 信箱本體
+  ctx.fillStyle = "#a855f7";
+  ctx.fillRect(cx - 10, o.y + 16, 20, 12);
 
-      ctx.fillStyle="#334155";
-      ctx.fillRect(px-7, py-2, 14, 14);
-    }
+  // 蓋子
+  ctx.strokeStyle = "#fff";
+  ctx.beginPath();
+  ctx.moveTo(cx - 10, o.y + 16);
+  ctx.lineTo(cx, o.y + 22);
+  ctx.lineTo(cx + 10, o.y + 16);
+  ctx.stroke();
+}
 
-    // ========= 更新玩家位置 =========
-    function update(dt){
-      if (anyModalOpen()) {
-        player.moving = false;
-        return;
-      }
+  /* ===== Label + E hint (ONLY when near) ===== */
+  if (isNear) {
+    ctx.shadowBlur = 0;
 
-      let dx=0, dy=0;
+    // Label background
+    ctx.fillStyle = "rgba(2,6,23,0.75)";
+    ctx.fillRect(o.x - 10, o.y - 24, 80, 16);
 
-      if (keys.has("ArrowUp") || keys.has("w")) dy -= 1;
-      if (keys.has("ArrowDown") || keys.has("s")) dy += 1;
-      if (keys.has("ArrowLeft") || keys.has("a")) dx -= 1;
-      if (keys.has("ArrowRight") || keys.has("d")) dx += 1;
+    // Label text
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText(o.label, o.x + 20, o.y - 12);
 
-      // 搖桿加成
-      if (joystickActive) {
-        dx += joyVec.x;
-        dy += joyVec.y;
-      }
+    // E hint
+    ctx.fillStyle = "#f97316";
+    ctx.font = "bold 12px system-ui";
+    ctx.fillText("E", o.x + 20, o.y - 36);
+  }
 
-      if (dx!==0 || dy!==0){
-        const len = Math.hypot(dx,dy) || 1;
-        dx/=len; dy/=len;
+  ctx.restore();
+}
 
-        player.x += dx*player.speed;
-        player.y += dy*player.speed;
 
-        if (Math.abs(dx) > Math.abs(dy))
-          player.dir = dx>0 ? "right":"left";
-        else
-          player.dir = dy>0 ? "down":"up";
 
-        player.moving = true;
-      } else {
-        player.moving = false;
-      }
 
-      // 邊界
-      player.x = Math.max(20, Math.min(WIDTH-20, player.x));
-      player.y = Math.max(20, Math.min(HEIGHT-20, player.y));
+function drawPlayer(){
+  const x=player.x;
+  const y=player.y;
 
-      // 互動物件偵測
-      nearObj = null;
-      for(const o of objects){
-        const cx = o.x + o.w/2;
-        const cy = o.y + o.h/2;
-        const dist = Math.hypot(player.x-cx, player.y-cy);
-        if(dist < 60){
-          nearObj = o;
-          hudHint.textContent = `E → ${o.label}`;
-          return;
-        }
-      }
-      hudHint.textContent="";
-    }
+  // head
+  ctx.fillStyle="#facc99";
+  ctx.fillRect(x-6,y-16,12,6);
 
-    // ========= 主迴圈 =========
-    let last=0;
-    function loop(t){
-      const dt = t-last;
-      last=t;
-      update(dt);
-      drawMap();
-      objects.forEach(drawObject);
-      drawPlayer();
-      requestAnimationFrame(loop);
-    }
-    requestAnimationFrame(loop);
+  // eyes
+  ctx.fillStyle="#111827";
+  ctx.fillRect(x-4,y-14,2,2);
+  ctx.fillRect(x+2,y-14,2,2);
 
-    // ========= Modal 開關 =========
-    function openModal(id){
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.style.display="flex";
-    }
-    function closeAll(){
-      document.querySelectorAll(".modal-backdrop").forEach(m=>m.style.display="none");
-    }
-    document.querySelectorAll("[data-close]").forEach(btn=>{
-      btn.addEventListener("click", closeAll);
-    });
+  // body
+  ctx.fillStyle="#1e293b";
+  ctx.fillRect(x-7,y-10,14,8);
 
-    // 點背景關閉
-    document.querySelectorAll(".modal-backdrop").forEach(back=>{
-      back.addEventListener("click", e=>{
-        if(e.target === back) closeAll();
-      });
-    });
+  // legs
+  ctx.fillStyle="#0f172a";
+  ctx.fillRect(x-5,y-2,4,6);
+  ctx.fillRect(x+1,y-2,4,6);
 
-    // ========= 手機搖桿邏輯 =========
-    const isTouch = "ontouchstart" in window;
-    if (isTouch) document.body.classList.add("touch");
+  // name tag
+  ctx.font="10px system-ui";
+  ctx.textAlign="center";
+  ctx.fillStyle="rgba(0,0,0,.6)";
+  ctx.fillRect(x-55,y-36,110,14);
+  ctx.fillStyle="#e5e7eb";
+  ctx.fillText("👋 Hi, I'm Wei Li Tien",x,y-24);
+}
 
-    const joystick = document.getElementById("joystick");
-    const joyInner = document.getElementById("joystickInner");
-    const btnInteract = document.getElementById("btnInteract");
 
-    let joystickActive = false;
-    let joyVec = {x:0, y:0};
+function loop(){
+    tick++;
+  update();
+  drawMap();
+  objects.forEach(drawObject);
+  drawPlayer();
+  requestAnimationFrame(loop);
+}
+loop();
 
-    const maxRadius = 30;  // 🔥 搖桿縮小後的最佳半徑
+/* ===== Modal helpers ===== */
+function openModal(id){
+  closeAll();
+  const el=document.getElementById(id);
+  if(el) el.style.display="flex";
+}
+function closeAll(){
+  document.querySelectorAll(".modal-backdrop").forEach(m=>m.style.display="none");
+}
+function openExperience(company) {
+  openModal(`modal-${company}`);
+}
 
-    function handleJoystick(ev){
-      const touch = ev.touches[0];
-      if(!touch) return;
-
-      const rect = joystick.getBoundingClientRect();
-      const cx = rect.left + rect.width/2;
-      const cy = rect.top + rect.height/2;
-
-      const dx = touch.clientX - cx;
-      const dy = touch.clientY - cy;
-
-      const dist = Math.min(Math.hypot(dx,dy), maxRadius);
-      const nx = dx / (dist || 1);
-      const ny = dy / (dist || 1);
-
-      joystickActive = true;
-      joyVec = {x:nx, y:ny};
-
-      joyInner.style.transform = `translate(${nx*dist/2}px, ${ny*dist/2}px)`;
-    }
-
-    function resetJoystick(){
-      joystickActive=false;
-      joyVec={x:0,y:0};
-      joyInner.style.transform="translate(0,0)";
-    }
-
-    joystick.addEventListener("touchstart", e=>{e.preventDefault(); handleJoystick(e);}, {passive:false});
-    joystick.addEventListener("touchmove",  e=>{e.preventDefault(); handleJoystick(e);}, {passive:false});
-    joystick.addEventListener("touchend",   ()=> resetJoystick());
-    joystick.addEventListener("touchcancel",()=> resetJoystick());
-
-    // E 按鈕（手機）
-    btnInteract.addEventListener("touchstart", e=>{
-      e.preventDefault();
-      openIfNear();
-    }, {passive:false});
-
-  </script>
-
+</script>
 </body>
 </html>
