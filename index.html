@@ -557,6 +557,22 @@ body.touch .interact-btn {
 /* ===== Game ===== */
 let tick = 0;
 
+const btnInteract = document.getElementById("btnInteract");
+
+btnInteract.addEventListener("touchstart", e => {
+  e.preventDefault();
+  if (nearObject) {
+    openModal(nearObject.modal);
+  }
+}, { passive: false });
+
+
+let joystickActive = false;
+let joyVec = { x: 0, y: 0 };
+const maxRadius = 30;  // 與 CSS 搭配的小搖桿半徑
+
+
+
 joystick.addEventListener("touchmove", e=>{
   e.preventDefault();
   handleJoystick(e);
@@ -602,12 +618,65 @@ window.addEventListener("keydown", e => {
 
 window.addEventListener("keyup", e=>keys.delete(e.key));
 
+/* ===== 搖桿邏輯 ===== */
+function handleJoystick(ev) {
+  const touch = ev.touches[0];
+  if (!touch) return;
+
+  const rect = joystick.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  const dx = touch.clientX - cx;
+  const dy = touch.clientY - cy;
+
+  const dist = Math.min(Math.hypot(dx, dy), maxRadius);
+  const nx = dx / (Math.hypot(dx, dy) || 1);
+  const ny = dy / (Math.hypot(dx, dy) || 1);
+
+  joystickActive = true;
+  joyVec = { x: nx, y: ny };
+
+  joystickInner.style.transform = `translate(${nx * dist * 0.5}px, ${ny * dist * 0.5}px)`;
+}
+
+function resetJoystick() {
+  joystickActive = false;
+  joyVec = { x: 0, y: 0 };
+  joystickInner.style.transform = "translate(0,0)";
+}
+
+joystick.addEventListener("touchstart", e => {
+  e.preventDefault();
+  handleJoystick(e);
+}, { passive: false });
+
+joystick.addEventListener("touchmove", e => {
+  e.preventDefault();
+  handleJoystick(e);
+}, { passive: false });
+
+joystick.addEventListener("touchend", resetJoystick);
+joystick.addEventListener("touchcancel", resetJoystick);
+
+
+
 function update(){
-  let dx=0,dy=0;
-  if(keys.has("w")||keys.has("ArrowUp")) dy--;
-  if(keys.has("s")||keys.has("ArrowDown")) dy++;
-  if(keys.has("a")||keys.has("ArrowLeft")) dx--;
-  if(keys.has("d")||keys.has("ArrowRight")) dx++;
+
+
+let dx = 0, dy = 0;
+
+  if (keys.has("w") || keys.has("ArrowUp")) dy--;
+  if (keys.has("s") || keys.has("ArrowDown")) dy++;
+  if (keys.has("a") || keys.has("ArrowLeft")) dx--;
+  if (keys.has("d") || keys.has("ArrowRight")) dx++;
+
+  /* ⭐ 搖桿向量加入移動 ⭐ */
+  if (joystickActive) {
+    dx += joyVec.x;
+    dy += joyVec.y;
+  }
+
   if(dx||dy){
     const l=Math.hypot(dx,dy)||1;
     player.x+=dx/l*player.speed;
