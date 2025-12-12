@@ -321,8 +321,8 @@ body.touch .interact-btn {
     ">
       <canvas
         id="skillsRadar"
-        width="260"
-        height="260"
+        width="200"
+        height="200"
         style="
           background:#020617;
           border-radius:12px;
@@ -637,15 +637,16 @@ function drawSkillsRadar() {
   const cx = W / 2;
   const cy = H / 2;
 
-  const maxR = 90;
+  const maxR = 60;
   const levels = 5;
 
   const skills = [
     { name: "Automation", value: 5 },
     { name: "CI/CD", value: 4 },
     { name: "RESTful API", value: 5 },
-    { name: "Mobile", value: 2.5 },
-    { name: "AI-assisted", value: 3 }
+    { name: "AI-assisted", value: 3 },
+    { name: "Mobile", value: 2.5 }
+    
   ];
 
   const n = skills.length;
@@ -690,7 +691,7 @@ function drawSkillsRadar() {
 
   for (let i = 0; i < n; i++) {
     const angle = -Math.PI / 2 + angleStep * i;
-    const labelR = maxR + 18;
+    const labelR = maxR + 10;
 
     const lx = Math.cos(angle) * labelR;
     const ly = Math.sin(angle) * labelR;
